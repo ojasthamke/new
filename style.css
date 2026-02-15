@@ -20,7 +20,6 @@ body {
     background-color: var(--white);
     line-height: 1.5;
     overflow-x: hidden;
-    /* Background Shadow Effect */
     background-image: radial-gradient(circle at 50% 50%, #ffffff 0%, #f4f8fa 100%);
     background-attachment: fixed;
 }
@@ -52,7 +51,7 @@ body {
 
 .logo {
     text-decoration: none;
-    font-size: 20px;
+    font-size: 20px; /* Lowered size */
     font-weight: 700;
     color: var(--text-dark);
     letter-spacing: -0.5px;
@@ -62,6 +61,40 @@ body {
 
 .logo span {
     color: var(--primary-blue);
+}
+
+/* Search Bar */
+.nav-search {
+    flex-grow: 1;
+    max-width: 400px;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.nav-search input {
+    width: 100%;
+    padding: 10px 15px 10px 40px;
+    border-radius: 12px;
+    border: 1px solid var(--border-light);
+    background: #F4F8FA;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.nav-search input:focus {
+    border-color: var(--primary-blue);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(184, 212, 227, 0.2);
+}
+
+.nav-search i {
+    position: absolute;
+    left: 15px;
+    color: #999;
+    width: 16px;
+    height: 16px;
 }
 
 /* Nav Fruits */
@@ -75,7 +108,7 @@ body {
 .nav-actions {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 15px;
     flex-shrink: 0;
 }
 
@@ -84,58 +117,12 @@ body {
     font-size: 14px !important;
 }
 
-/* REDESIGNED CART BUTTON */
-.cart-btn {
-    position: relative;
-    background: rgba(184, 212, 227, 0.15);
-    border: 1px solid rgba(184, 212, 227, 0.3);
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    color: var(--text-dark);
-}
-
-.cart-btn:hover {
-    background: var(--primary-blue);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(184, 212, 227, 0.4);
-}
-
-.cart-btn i, .cart-btn svg {
-    width: 20px;
-    height: 20px;
-}
-
-.cart-count {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background: var(--text-dark);
-    color: white;
-    font-size: 10px;
-    font-weight: 700;
-    min-width: 18px;
-    height: 18px;
-    padding: 0 4px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid white;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
 .profile-btn {
     background: #F4F8FA;
     border: none;
     width: 40px;
     height: 40px;
-    border-radius: 12px; /* Matched cart btn radius */
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -884,6 +871,7 @@ body {
 
 @media (max-width: 768px) {
     .container { padding: 0 24px; }
+    .nav-search { display: none; }
 
     .nav nav {
         position: fixed;
