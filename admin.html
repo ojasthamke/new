@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Kisan to Customer</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="cart.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Arvo:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .admin-container { padding: 40px 0; max-width: 1300px; margin: 0 auto; position: relative; }
+        .admin-nav-tabs { display: flex; gap: 10px; margin-bottom: 30px; background: rgba(255,255,255,0.5); padding: 10px; border-radius: 16px; backdrop-filter: blur(10px); }
+        .nav-tab { padding: 12px 24px; border-radius: 12px; cursor: pointer; font-weight: 600; transition: 0.3s; color: var(--text-muted); border: none; background: none; }
+        .nav-tab.active { background: var(--text-dark); color: white; }
+
+        .dashboard-grid { display: grid; grid-template-columns: 500px 1fr; gap: 40px; }
+        .admin-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(25px); padding: 35px; border-radius: 28px; border: 1px solid rgba(255,255,255,0.5); box-shadow: 0 15px 40px rgba(0,0,0,0.06); }
+
+        /* HORIZONTAL SCROLLABLE PRICE ROW */
+        .price-row-scroll {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 20px;
+            border: 1.5px solid #edf2f7;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-blue) transparent;
+        }
+        .price-row-scroll::-webkit-scrollbar { height: 6px; }
+        .price-row-scroll::-webkit-scrollbar-thumb { background: var(--primary-blue); border-radius: 10px; }
+
+        .unit-input-group { display: flex; flex-direction: column; gap: 8px; min-width: 100px; }
+        .unit-input-group label { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; text-align: center; }
+        .unit-input-group input { padding: 10px; border-radius: 12px; border: 1.5px solid #e2e8f0; font-weight: 700; font-size: 15px; text-align: center; color: var(--text-dark); width: 100%; }
+
+        .product-list-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: white; border-radius: 16px; margin-bottom: 12px; border: 1px solid #eee; }
+        .product-list-item img { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; }
+
+        .global-save-btn { position: fixed; bottom: 40px; right: 40px; background: #25D366; color: white; padding: 22px 45px; border-radius: 50px; font-weight: 800; box-shadow: 0 15px 35px rgba(37, 211, 102, 0.4); border: none; cursor: pointer; z-index: 9000; display: flex; align-items: center; gap: 15px; transition: 0.3s; font-size: 16px; }
+        .global-save-btn:hover { transform: scale(1.05) translateY(-5px); background: #1eb954; }
+
+        .edit-name-input { font-family: var(--font-heading); font-size: 22px; font-weight: 700; border: none; border-bottom: 2px solid transparent; background: transparent; padding: 5px 0; width: 100%; transition: 0.3s; }
+        .edit-name-input:focus { border-bottom-color: var(--primary-blue); outline: none; background: rgba(184, 212, 227, 0.05); }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body>
+
+<header class="nav">
+    <div class="container">
+        <a href="index.html" class="logo"><span>Admin</span> Dashboard</a>
+        <div class="nav-actions">
+            <a href="shop.html" class="btn btn-primary-light nav-order-btn">View Live Shop</a>
+        </div>
+    </div>
+</header>
+
+<div class="container admin-container">
+    <div class="admin-nav-tabs">
+        <button class="nav-tab active" onclick="switchTab('add')">Add Products</button>
+        <button class="nav-tab" onclick="switchTab('manage')">Manage Inventory & Prices</button>
+    </div>
+
+    <div id="tab-add" class="tab-content active">
+        <div class="dashboard-grid">
+            <div class="admin-card">
+                <h3>Create New Product</h3>
+                <div class="profile-form">
+                    <div class="form-group full"><label>Name</label><input type="text" id="p-name" placeholder="Enter name"></div>
+                    <div class="form-group full"><label>Category</label><select id="p-category" style="width:100%; padding:14px; border-radius:14px; border:1px solid #e2e8f0;"><option value="vegetables">Vegetables</option><option value="fruits">Fruits</option></select></div>
+                    <div class="form-group full"><label>Image URL</label><input type="text" id="p-img" placeholder="Paste link"></div>
+
+                    <label style="font-size:14px; font-weight:800; margin-top:20px; color: var(--text-dark);">Set Unit Prices (₹)</label>
+                    <div class="price-row-scroll">
+                        <div class="unit-input-group"><label>1kg*</label><input type="number" id="p-1kg" oninput="autoFill(this.value)"></div>
+                        <div class="unit-input-group"><label>250g</label><input type="number" id="p-250g"></div>
+                        <div class="unit-input-group"><label>500g</label><input type="number" id="p-500g"></div>
+                        <div class="unit-input-group"><label>2kg</label><input type="number" id="p-2kg"></div>
+                        <div class="unit-input-group"><label>3kg</label><input type="number" id="p-3kg"></div>
+                        <div class="unit-input-group"><label>5kg</label><input type="number" id="p-5kg"></div>
+                    </div>
+                    <button class="save-profile-btn" onclick="addProduct()" style="margin-top: 30px;">Add to Shop</button>
+                </div>
+            </div>
+            <div class="admin-card"><h3>Quick View</h3><div id="recent-products"></div></div>
+        </div>
+    </div>
+
+    <div id="tab-manage" class="tab-content"><div id="full-inventory-list"></div></div>
+</div>
+
+<button class="global-save-btn" onclick="saveAllChanges()"><i data-lucide="save"></i> Update Website</button>
+
+<script>
+    lucide.createIcons();
+    const weights = ["250gm", "500gm", "1kg", "2kg", "3kg", "5kg"];
+
+    function switchTab(tab) {
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+        document.getElementById('tab-' + tab).classList.add('active');
+        if(tab === 'manage') renderFullInventory();
+    }
+
+    function autoFill(val) {
+        const b = parseFloat(val); if(!b) return;
+        document.getElementById('p-250g').value = Math.round(b * 0.25);
+        document.getElementById('p-500g').value = Math.round(b * 0.5);
+        document.getElementById('p-2kg').value = Math.round(b * 1.9);
+        document.getElementById('p-3kg').value = Math.round(b * 2.8);
+        document.getElementById('p-5kg').value = Math.round(b * 4.5);
+    }
+
+    const defaultProducts = {
+        vegetables: [{ id: 1, name: "Organic Potatoes", img: "https://images.unsplash.com/photo-1518977676601-b53f02bad6d3?auto=format&fit=crop&q=80&w=600", prices: {"250gm":10,"500gm":20,"1kg":40,"2kg":75,"3kg":110,"5kg":170} }],
+        fruits: []
+    };
+
+    let tempInventory = JSON.parse(localStorage.getItem('kisan_inventory')) || defaultProducts;
+
+    function addProduct() {
+        const name = document.getElementById('p-name').value;
+        const cat = document.getElementById('p-category').value;
+        const img = document.getElementById('p-img').value;
+        const prices = {};
+        weights.forEach(w => prices[w] = parseFloat(document.getElementById('p-' + w.replace('m','')).value) || 0);
+        if(!name || !prices["1kg"] || !img) return alert("Missing fields!");
+        tempInventory[cat].unshift({ id: Date.now(), name, img, prices });
+        saveAllChanges();
+    }
+
+    function saveAllChanges() {
+        localStorage.setItem('kisan_inventory', JSON.stringify(tempInventory));
+        alert("Website Synchronized! ✅");
+        location.reload();
+    }
+
+    function updateTempPrice(cat, id, weight, val) {
+        const p = tempInventory[cat].find(x => x.id == id);
+        if(p) p.prices[weight] = parseFloat(val);
+    }
+
+    function updateTempName(cat, id, name) {
+        const p = tempInventory[cat].find(x => x.id == id);
+        if(p) p.name = name;
+    }
+
+    function deleteProduct(cat, id) {
+        if(!confirm("Delete?")) return;
+        tempInventory[cat] = tempInventory[cat].filter(p => p.id !== id);
+        saveAllChanges();
+    }
+
+    function renderFullInventory() {
+        const container = document.getElementById('full-inventory-list');
+        container.innerHTML = '';
+        ['vegetables', 'fruits'].forEach(cat => {
+            const h = document.createElement('h3'); h.innerText = cat.toUpperCase(); h.style.margin = '40px 0 20px'; h.style.color = 'var(--primary-blue)';
+            container.appendChild(h);
+            tempInventory[cat].forEach(p => {
+                const item = document.createElement('div');
+                item.className = 'admin-card'; item.style.marginBottom = '25px';
+                item.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                        <div style="display:flex; align-items:center; gap:20px; flex-grow: 1;">
+                            <img src="${p.img}" style="width:60px; height:60px; border-radius:12px; object-fit:cover;">
+                            <div style="flex-grow: 1;">
+                                <input type="text" class="edit-name-input" value="${p.name}" oninput="updateTempName('${cat}', ${p.id}, this.value)">
+                            </div>
+                        </div>
+                        <button class="btn-delete" style="border:none; padding:10px; border-radius:10px; cursor:pointer;" onclick="deleteProduct('${cat}', ${p.id})"><i data-lucide="trash-2"></i></button>
+                    </div>
+                    <div class="price-row-scroll">
+                        ${weights.map(w => `<div class="unit-input-group"><label>${w}</label><input type="number" value="${p.prices[w]}" oninput="updateTempPrice('${cat}', ${p.id}, '${w}', this.value)"></div>`).join('')}
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        });
+        lucide.createIcons();
+    }
+
+    const recent = document.getElementById('recent-products');
+    [...tempInventory.vegetables, ...tempInventory.fruits].slice(0, 5).forEach(p => {
+        const d = document.createElement('div'); d.className = 'product-list-item';
+        d.innerHTML = `<img src="${p.img}"> <strong>${p.name}</strong> <span>₹${p.prices['1kg']}</span>`;
+        recent.appendChild(d);
+    });
+</script>
+</body>
+</html>
