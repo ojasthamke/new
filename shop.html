@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kisan to Customer | Shop Vegetables & Fruits</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="cart.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Arvo:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+<header class="nav">
+    <div class="container">
+        <a href="index.html" class="logo"><span>Kisan</span> to Customer</a>
+        <div class="nav-fruits"><span>🍎</span><span>🥭</span><span>🍇</span><span>🥝</span></div>
+        <div class="nav-actions">
+            <button class="cart-btn" id="open-cart"><i data-lucide="shopping-cart"></i><span class="cart-count">0</span></button>
+            <button class="profile-btn" id="open-profile"><i data-lucide="user"></i></button>
+        </div>
+    </div>
+</header>
+
+<!-- Cart Sidebar -->
+<div class="sidebar" id="cart-sidebar">
+    <div class="floating-fruits-bg"></div>
+    <div class="sidebar-header"><h3>Your Basket</h3><button class="close-sidebar" id="close-cart"><i data-lucide="x"></i></button></div>
+    <div class="sidebar-content" id="cart-items"></div>
+    <div class="sidebar-footer">
+        <div class="price-breakdown">
+            <div class="price-row"><span>Subtotal</span> <span id="cart-subtotal">₹0.00</span></div>
+            <div class="price-row"><span>Delivery Fee</span> <span>₹30.00</span></div>
+            <div class="price-row"><span>GST</span> <span>₹6.00</span></div>
+            <div class="price-row total-row"><span>Total</span> <span id="cart-total-amount">₹0.00</span></div>
+        </div>
+        <button class="checkout-btn" id="whatsapp-checkout"><i data-lucide="send"></i> Proceed to WhatsApp</button>
+    </div>
+</div>
+
+<!-- Profile Modal Overlay -->
+<div class="modal-overlay" id="profile-overlay">
+    <div class="profile-modal">
+        <button class="close-modal" id="close-profile"><i data-lucide="x"></i></button>
+        <h2>My Profile</h2>
+        <div class="profile-form">
+            <div class="form-group">
+                <label>First Name *</label>
+                <input type="text" id="user-first-name" placeholder="Enter first name">
+            </div>
+            <div class="form-group">
+                <label>Surname *</label>
+                <input type="text" id="user-surname" placeholder="Enter surname">
+            </div>
+            <div class="form-group">
+                <label>Phone Number *</label>
+                <input type="tel" id="user-phone" placeholder="+91 00000 00000">
+            </div>
+            <div class="form-group">
+                <label>Alternate Phone Number *</label>
+                <input type="tel" id="user-alt-phone" placeholder="Alternate phone">
+            </div>
+            <div class="form-group full">
+                <label>Delivery Address *</label>
+                <textarea id="user-address" rows="3" placeholder="House no, Street, Landmark, City"></textarea>
+            </div>
+            <button class="save-profile-btn" id="save-profile">Save Information</button>
+            <p id="profile-status" style="grid-column: span 2; font-size: 13px; text-align: center; margin-top: 10px;"></p>
+        </div>
+    </div>
+</div>
+
+<div class="cart-bottom-bar" id="cart-bottom-bar">
+    <div class="cart-bar-content">
+        <div class="cart-summary">
+            <i data-lucide="shopping-basket"></i>
+            <span id="bottom-cart-count">0 Items</span>
+            <span style="color:rgba(255,255,255,0.2)">|</span>
+            <span id="bottom-cart-total">₹0.00</span>
+        </div>
+        <div class="cart-bar-actions">
+            <button class="btn-view-cart" id="view-cart-btn">View Basket</button>
+            <button class="btn-checkout-bar" id="bar-checkout">Checkout</button>
+        </div>
+    </div>
+</div>
+
+<main>
+    <header class="shop-header"><div class="container"><h1>Fresh Harvest Shop</h1><p>Select the finest organic produce directly from our local farms.</p></div></header>
+    <section id="vegetables" class="shop-section">
+        <div class="container"><h2 class="section-title"><i data-lucide="leaf"></i> Fresh Vegetables</h2><div class="product-grid" id="veg-grid"></div></div>
+    </section>
+    <section id="fruits" class="shop-section" style="background-color: #F9FBFC;">
+        <div class="container"><h2 class="section-title"><i data-lucide="apple"></i> Seasonal Fruits</h2><div class="product-grid" id="fruit-grid"></div></div>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand"><a href="index.html" class="logo"><span>Kisan</span> to Customer</a><p>Connecting local farmers directly with health-conscious families.</p></div>
+            <div class="footer-contact"><h3 class="footer-heading">Contact Us</h3><p><i data-lucide="mail"></i> hello@kisantocustomer.com</p></div>
+        </div>
+        <div class="footer-bottom"><p>© 2026 Kisan to Customer. All rights reserved.</p></div>
+    </div>
+</footer>
+
+<script>
+    lucide.createIcons();
+
+    // Sidebars & Modal Logic
+    const profileOverlay = document.getElementById('profile-overlay');
+    const openProfileBtn = document.getElementById('open-profile');
+    const closeProfileBtn = document.getElementById('close-profile');
+    const saveProfileBtn = document.getElementById('save-profile');
+    const cartSidebar = document.getElementById('cart-sidebar');
+    const openCartBtn = document.getElementById('open-cart');
+    const closeCartBtn = document.getElementById('close-cart');
+
+    openProfileBtn.addEventListener('click', () => { profileOverlay.classList.add('active'); cartSidebar.classList.remove('active'); });
+    closeProfileBtn.addEventListener('click', () => profileOverlay.classList.remove('active'));
+    profileOverlay.addEventListener('click', (e) => { if(e.target === profileOverlay) profileOverlay.classList.remove('active'); });
+
+    openCartBtn.addEventListener('click', () => { cartSidebar.classList.add('active'); profileOverlay.classList.remove('active'); });
+    closeCartBtn.addEventListener('click', () => cartSidebar.classList.remove('active'));
+
+    // Sprinkle Effect function
+    function createConfetti() {
+        for (let i = 0; i < 50; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.backgroundColor = ['#B8D4E3', '#2D2D2D', '#25D366', '#FFD700'][Math.floor(Math.random() * 4)];
+            confetti.style.animation = `sprinkle ${1 + Math.random() * 2}s linear forwards`;
+            confetti.style.width = (5 + Math.random() * 10) + 'px';
+            confetti.style.height = confetti.style.width;
+            document.body.appendChild(confetti);
+            setTimeout(() => confetti.remove(), 3000);
+        }
+    }
+
+    const fruitsArr = ['🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🍆', '🥑', '🥦', '🥬', '🥒', '🌽', '🥕', '🫑', '🥔', '🍠'];
+    document.querySelectorAll('.floating-fruits-bg').forEach(container => {
+        for (let i = 0; i < 15; i++) {
+            const fruit = document.createElement('div'); fruit.className = 'floating-fruit'; fruit.innerText = fruitsArr[Math.floor(Math.random() * fruitsArr.length)];
+            fruit.style.left = Math.random() * 100 + '%'; fruit.style.top = Math.random() * 100 + '%';
+            fruit.style.animationDuration = (15 + Math.random() * 10) + 's'; container.appendChild(fruit);
+        }
+    });
+
+    const products = {
+        vegetables: [
+            { id: 1, name: "Organic Potatoes", price: 40, img: "https://images.unsplash.com/photo-1518977676601-b53f02bad6d3?auto=format&fit=crop&q=80&w=600" },
+            { id: 2, name: "Fresh Tomatoes", price: 60, img: "https://images.unsplash.com/photo-1590779033100-9f60705a2f3b?auto=format&fit=crop&q=80&w=600" },
+            { id: 3, name: "Crunchy Carrots", price: 50, img: "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?auto=format&fit=crop&q=80&w=600" },
+            { id: 4, name: "Red Onions", price: 45, img: "https://images.unsplash.com/photo-1587336272348-0730ce1c23b9?auto=format&fit=crop&q=80&w=600" },
+            { id: 5, name: "Fresh Broccoli", price: 120, img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=600" },
+            { id: 6, name: "Baby Spinach", price: 80, img: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&q=80&w=600" },
+            { id: 7, name: "Green Cucumbers", price: 30, img: "https://images.unsplash.com/photo-1614735241165-6756e1df61ab?auto=format&fit=crop&q=80&w=600" },
+            { id: 8, name: "Green Cabbage", price: 40, img: "https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?auto=format&fit=crop&q=80&w=600" },
+            { id: 9, name: "Bell Peppers", price: 100, img: "https://images.unsplash.com/photo-1594282486552-05b4d80fbb9f?auto=format&fit=crop&q=80&w=600" }
+        ],
+        fruits: [
+            { id: 10, name: "Red Apples", price: 180, img: "https://images.unsplash.com/photo-1560806887-1e4cd0b6bcd6?auto=format&fit=crop&q=80&w=600" },
+            { id: 11, name: "Yellow Bananas", price: 60, img: "https://images.unsplash.com/photo-1571771894821-ad9b588640ba?auto=format&fit=crop&q=80&w=600" },
+            { id: 12, name: "Sweet Oranges", price: 120, img: "https://images.unsplash.com/photo-1557800636-894a64c1696f?auto=format&fit=crop&q=80&w=600" },
+            { id: 13, name: "Juicy Pears", price: 150, img: "https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&q=80&w=600" },
+            { id: 14, name: "Fresh Pineapple", price: 80, img: "https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&q=80&w=600" },
+            { id: 15, name: "Green Grapes", price: 140, img: "https://images.unsplash.com/photo-1512103522279-9e54d636bb49?auto=format&fit=crop&q=80&w=600" },
+            { id: 16, name: "King Mangoes", price: 250, img: "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fit=crop&q=80&w=600" },
+            { id: 17, name: "Pomegranates", price: 200, img: "https://images.unsplash.com/photo-1596333615277-20b7ea77303a?auto=format&fit=crop&q=80&w=600" }
+        ]
+    };
+
+    const qtyOptions = ["250gm", "500gm", "1kg", "2kg", "3kg", "4kg", "5kg"];
+
+    const renderGrid = (items, gridId) => {
+        const grid = document.getElementById(gridId);
+        grid.innerHTML = items.map(p => `
+            <div class="product-card">
+                <div class="product-image"><img src="${p.img}" alt="${p.name}"></div>
+                <div class="product-info">
+                    <h3>${p.name}</h3>
+                    <div class="fancy-qty-selector">
+                        ${qtyOptions.map(o => `<div class="qty-pill ${o==='500gm'?'active':''}" onclick="setPill(this, ${p.price})">${o}</div>`).join('')}
+                    </div>
+                    <div class="product-meta">
+                        <span class="product-price">₹${(p.price * 0.5).toFixed(2)}</span>
+                    </div>
+                    <button class="add-to-cart-btn btn-primary-light" onclick="handleAddToCart(this, '${p.name}', '${p.img}', ${p.id}, ${p.price})">
+                        <i data-lucide="shopping-cart"></i> Add to Cart
+                    </button>
+                </div>
+            </div>
+        `).join('');
+        lucide.createIcons();
+    };
+
+    window.setPill = (pill, basePrice) => {
+        pill.parentElement.querySelectorAll('.qty-pill').forEach(el => el.classList.remove('active'));
+        pill.classList.add('active');
+        const qtyStr = pill.innerText;
+        let factor = 1;
+        if (qtyStr === "250gm") factor = 0.25;
+        else if (qtyStr === "500gm") factor = 0.5;
+        else factor = parseInt(qtyStr);
+
+        const priceEl = pill.parentElement.nextElementSibling.querySelector('.product-price');
+        priceEl.innerText = `₹${(basePrice * factor).toFixed(2)}`;
+        priceEl.classList.remove('price-pop');
+        void priceEl.offsetWidth;
+        priceEl.classList.add('price-pop');
+    };
+
+    renderGrid(products.vegetables, 'veg-grid');
+    renderGrid(products.fruits, 'fruit-grid');
+
+    const loadProfile = () => {
+        const p = JSON.parse(localStorage.getItem('kisan_profile') || '{}');
+        if(p.firstName) {
+            document.getElementById('user-first-name').value = p.firstName;
+            document.getElementById('user-surname').value = p.surname;
+            document.getElementById('user-phone').value = p.phone;
+            document.getElementById('user-alt-phone').value = p.altPhone;
+            document.getElementById('user-address').value = p.address;
+        }
+    };
+    loadProfile();
+
+    saveProfileBtn.addEventListener('click', () => {
+        const profile = {
+            firstName: document.getElementById('user-first-name').value,
+            surname: document.getElementById('user-surname').value,
+            phone: document.getElementById('user-phone').value,
+            altPhone: document.getElementById('user-alt-phone').value,
+            address: document.getElementById('user-address').value
+        };
+        if (!profile.firstName || !profile.surname || !profile.phone || !profile.altPhone || !profile.address) {
+            document.getElementById('profile-status').innerText = 'All fields mandatory! ❌';
+            document.getElementById('profile-status').style.color = '#ff5f56';
+            return;
+        }
+        localStorage.setItem('kisan_profile', JSON.stringify(profile));
+        document.getElementById('profile-status').innerText = 'Saved Successfully! ✅';
+        document.getElementById('profile-status').style.color = '#25D366';
+        createConfetti();
+        setTimeout(() => { document.getElementById('profile-status').innerText = ''; }, 3000);
+    });
+
+    let cart = [];
+    const cartCountEl = document.querySelector('.cart-count');
+    const bottomCartCountEl = document.getElementById('bottom-cart-count');
+    const bottomCartTotalEl = document.getElementById('bottom-cart-total');
+    const cartItemsEl = document.getElementById('cart-items');
+    const subtotalEl = document.getElementById('cart-subtotal');
+    const totalEl = document.getElementById('cart-total-amount');
+
+    window.handleAddToCart = (btn, name, img, id, basePrice) => {
+        const activePill = btn.parentElement.querySelector('.qty-pill.active');
+        const weight = activePill.innerText;
+        let factor = 1; if (weight === "250gm") factor = 0.25; else if (weight === "500gm") factor = 0.5; else factor = parseInt(weight);
+        const finalPrice = basePrice * factor;
+        const existing = cart.find(item => item.id === id && item.weight === weight);
+        if (existing) existing.qty++; else cart.push({ id, name, img, weight, price: finalPrice, qty: 1 });
+        updateUI();
+    };
+
+    function updateUI() {
+        const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+        cartCountEl.innerText = totalItems; bottomCartCountEl.innerText = `${totalItems} Items`;
+        document.getElementById('cart-bottom-bar').classList.toggle('active', totalItems > 0);
+        if (cart.length === 0) { cartItemsEl.innerHTML = '<p style="text-align: center; color: #999; margin-top: 40px;">Your basket is empty</p>'; subtotalEl.innerText = totalEl.innerText = bottomCartTotalEl.innerText = "₹0.00"; }
+        else {
+            cartItemsEl.innerHTML = cart.map((item, index) => `<div class="cart-item"><img src="${item.img}" class="cart-item-img"><div class="cart-item-info"><h4>${item.name} (${item.weight})</h4><p>₹${item.price.toFixed(2)} x ${item.qty}</p></div><button onclick="removeItem(${index})" style="background:none; border:none; color:#ff5f56; cursor:pointer"><i data-lucide="trash-2"></i></button></div>`).join('');
+            lucide.createIcons();
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            subtotalEl.innerText = `₹${subtotal.toFixed(2)}`;
+            totalEl.innerText = bottomCartTotalEl.innerText = `₹${(subtotal + 36).toFixed(2)}`;
+        }
+    }
+    window.removeItem = (index) => { cart.splice(index, 1); updateUI(); };
+
+    const handleCheckout = () => {
+        const p = JSON.parse(localStorage.getItem('kisan_profile') || '{}');
+        if (!p.firstName || !p.surname || !p.phone || !p.altPhone || !p.address) { alert('Please complete profile!'); profileOverlay.classList.add('active'); cartSidebar.classList.remove('active'); return; }
+        if (cart.length === 0) return alert('Cart is empty!');
+        let msg = `*NEW ORDER - Kisan to Customer*\n\n*Customer:* ${p.firstName} ${p.surname}\n*Phone:* ${p.phone}\n*Alt:* ${p.altPhone}\n*Address:* ${p.address}\n\n*Order:*\n`;
+        cart.forEach(i => msg += `- ${i.name} (${i.weight}) x ${i.qty}: ₹${(i.price*i.qty).toFixed(2)}\n`);
+        const sub = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+        msg += `\nSubtotal: ₹${sub.toFixed(2)}\nDelivery: ₹30.00\nGST: ₹6.00\n*TOTAL: ₹${(sub+36).toFixed(2)}*`;
+        window.open(`https://wa.me/919021107009?text=${encodeURIComponent(msg)}`, '_blank');
+    };
+    document.getElementById('whatsapp-checkout').addEventListener('click', handleCheckout);
+    document.getElementById('bar-checkout').addEventListener('click', handleCheckout);
+    document.getElementById('view-cart-btn').addEventListener('click', () => cartSidebar.classList.add('active'));
+</script>
+</body>
+</html>
