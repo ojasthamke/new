@@ -20,6 +20,7 @@ body {
     background-color: var(--white);
     line-height: 1.5;
     overflow-x: hidden;
+    /* Background Shadow Effect */
     background-image: radial-gradient(circle at 50% 50%, #ffffff 0%, #f4f8fa 100%);
     background-attachment: fixed;
 }
@@ -51,7 +52,7 @@ body {
 
 .logo {
     text-decoration: none;
-    font-size: 20px; /* Lowered size */
+    font-size: 20px;
     font-weight: 700;
     color: var(--text-dark);
     letter-spacing: -0.5px;
@@ -61,40 +62,6 @@ body {
 
 .logo span {
     color: var(--primary-blue);
-}
-
-/* Search Bar */
-.nav-search {
-    flex-grow: 1;
-    max-width: 400px;
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.nav-search input {
-    width: 100%;
-    padding: 10px 15px 10px 40px;
-    border-radius: 12px;
-    border: 1px solid var(--border-light);
-    background: #F4F8FA;
-    font-size: 14px;
-    outline: none;
-    transition: all 0.3s ease;
-}
-
-.nav-search input:focus {
-    border-color: var(--primary-blue);
-    background: white;
-    box-shadow: 0 0 0 4px rgba(184, 212, 227, 0.2);
-}
-
-.nav-search i {
-    position: absolute;
-    left: 15px;
-    color: #999;
-    width: 16px;
-    height: 16px;
 }
 
 /* Nav Fruits */
@@ -108,7 +75,7 @@ body {
 .nav-actions {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 12px;
     flex-shrink: 0;
 }
 
@@ -122,7 +89,7 @@ body {
     border: none;
     width: 40px;
     height: 40px;
-    border-radius: 50%;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -871,7 +838,6 @@ body {
 
 @media (max-width: 768px) {
     .container { padding: 0 24px; }
-    .nav-search { display: none; }
 
     .nav nav {
         position: fixed;
@@ -905,6 +871,7 @@ body {
     }
 
     .hero-image-wrapper {
+        display: block !important; /* Ensure it's not hidden */
         order: 1;
         margin-bottom: 30px;
     }
