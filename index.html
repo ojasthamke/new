@@ -6,6 +6,7 @@
     <meta name="description" content="Kisan to Customer - Premium organic vegetables delivered from local farmers directly to your doorstep.">
     <title>Kisan to Customer | Farm-Fresh Organic Delivery</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="cart.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Arvo:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
@@ -16,22 +17,45 @@
 <header class="nav">
     <div class="container">
         <a href="index.html" class="logo"><span>Kisan</span> to Customer</a>
-
-        <div class="nav-fruits">
-            <span>🍎</span>
-            <span>🥭</span>
-            <span>🍇</span>
-            <span>🥝</span>
-        </div>
-
+        <div class="nav-fruits"><span>🍎</span><span>🥭</span><span>🍇</span><span>🥝</span></div>
         <div class="nav-actions">
             <a href="shop.html" class="btn btn-primary-light nav-order-btn">Order Now</a>
-            <button class="profile-btn" aria-label="Profile">
-                <i data-lucide="user"></i>
-            </button>
+            <button class="profile-btn" id="open-profile"><i data-lucide="user"></i></button>
         </div>
     </div>
 </header>
+
+<!-- Profile Modal Overlay -->
+<div class="modal-overlay" id="profile-overlay">
+    <div class="profile-modal">
+        <button class="close-modal" id="close-profile"><i data-lucide="x"></i></button>
+        <h2>My Profile</h2>
+        <div class="profile-form">
+            <div class="form-group">
+                <label>First Name *</label>
+                <input type="text" id="user-first-name" placeholder="Enter first name">
+            </div>
+            <div class="form-group">
+                <label>Surname *</label>
+                <input type="text" id="user-surname" placeholder="Enter surname">
+            </div>
+            <div class="form-group">
+                <label>Phone Number *</label>
+                <input type="tel" id="user-phone" placeholder="+91 00000 00000">
+            </div>
+            <div class="form-group">
+                <label>Alternate Phone Number *</label>
+                <input type="tel" id="user-alt-phone" placeholder="Alternate phone">
+            </div>
+            <div class="form-group full">
+                <label>Delivery Address *</label>
+                <textarea id="user-address" rows="3" placeholder="House no, Street, Landmark, City"></textarea>
+            </div>
+            <button class="save-profile-btn" id="save-profile">Save Information</button>
+            <p id="profile-status" style="grid-column: span 2; font-size: 13px; text-align: center; margin-top: 10px;"></p>
+        </div>
+    </div>
+</div>
 
 <main>
     <section id="home" class="hero">
@@ -93,92 +117,14 @@
 
     <section class="benefits-bar">
         <div class="benefits-track">
-            <!-- First Set -->
-            <div class="benefit-item">
-                <div class="benefit-icon"><i data-lucide="shield-check"></i></div>
-                <div class="benefit-text">
-                    <h3>SECURE PAYMENTS</h3>
-                    <p>All transactions are encrypted and secure.</p>
-                </div>
-            </div>
-            <div class="benefit-item">
-                <div class="benefit-icon"><i data-lucide="truck"></i></div>
-                <div class="benefit-text">
-                    <h3>FIXED DELIVERY RATES</h3>
-                    <p>Simple and transparent delivery pricing.</p>
-                </div>
-            </div>
-            <div class="benefit-item">
-                <div class="benefit-icon"><i data-lucide="calendar"></i></div>
-                <div class="benefit-text">
-                    <h3>SCHEDULED DELIVERIES</h3>
-                    <p>Deliveries you can rely on, every time.</p>
-                </div>
-            </div>
-            <div class="benefit-item">
-                <div class="benefit-icon"><i data-lucide="headphones"></i></div>
-                <div class="benefit-text">
-                    <h3>24/7 SUPPORT</h3>
-                    <p>Always here to assist you.</p>
-                </div>
-            </div>
-            <div class="benefit-item">
-                <div class="benefit-icon"><i data-lucide="award"></i></div>
-                <div class="benefit-text">
-                    <h3>QUALITY GUARANTEED</h3>
-                    <p>Superior farm-fresh quality you can trust.</p>
-                </div>
-            </div>
-            <div class="benefit-item">
-                <div class="benefit-icon"><i data-lucide="leaf"></i></div>
-                <div class="benefit-text">
-                    <h3>ETHICALLY SOURCED</h3>
-                    <p>Sustainable and fair labor practices.</p>
-                </div>
-            </div>
-            <!-- Duplicate Set for Seamless Loop -->
-            <div class="benefit-item">
-                <div class="benefit-icon"><i data-lucide="shield-check"></i></div>
-                <div class="benefit-text">
-                    <h3>SECURE PAYMENTS</h3>
-                    <p>All transactions are encrypted and secure.</p>
-                </div>
-            </div>
-            <div class="benefit-item">
-                <div class="benefit-icon"><i data-lucide="truck"></i></div>
-                <div class="benefit-text">
-                    <h3>FIXED DELIVERY RATES</h3>
-                    <p>Simple and transparent delivery pricing.</p>
-                </div>
-            </div>
-            <div class="benefit-item">
-                <div class="benefit-icon"><i data-lucide="calendar"></i></div>
-                <div class="benefit-text">
-                    <h3>SCHEDULED DELIVERIES</h3>
-                    <p>Deliveries you can rely on, every time.</p>
-                </div>
-            </div>
-            <div class="benefit-item">
-                <div class="benefit-icon"><i data-lucide="headphones"></i></div>
-                <div class="benefit-text">
-                    <h3>24/7 SUPPORT</h3>
-                    <p>Always here to assist you.</p>
-                </div>
-            </div>
-            <div class="benefit-item">
-                <div class="benefit-icon"><i data-lucide="award"></i></div>
-                <div class="benefit-text">
-                    <h3>QUALITY GUARANTEED</h3>
-                    <p>Superior farm-fresh quality you can trust.</p>
-                </div>
-            </div>
-            <div class="benefit-item">
-                <div class="benefit-icon"><i data-lucide="leaf"></i></div>
-                <div class="benefit-text">
-                    <h3>ETHICALLY SOURCED</h3>
-                    <p>Sustainable and fair labor practices.</p>
-                </div>
-            </div>
+            <!-- Set items -->
+            <div class="benefit-item"><div class="benefit-icon"><i data-lucide="shield-check"></i></div><div class="benefit-text"><h3>SECURE PAYMENTS</h3><p>All transactions are encrypted.</p></div></div>
+            <div class="benefit-item"><div class="benefit-icon"><i data-lucide="truck"></i></div><div class="benefit-text"><h3>FIXED DELIVERY</h3><p>Simple and transparent rates.</p></div></div>
+            <div class="benefit-item"><div class="benefit-icon"><i data-lucide="calendar"></i></div><div class="benefit-text"><h3>SCHEDULED</h3><p>Deliveries you can rely on.</p></div></div>
+            <div class="benefit-item"><div class="benefit-icon"><i data-lucide="headphones"></i></div><div class="benefit-text"><h3>24/7 SUPPORT</h3><p>Always here to assist you.</p></div></div>
+            <!-- Duplicate for loop -->
+            <div class="benefit-item"><div class="benefit-icon"><i data-lucide="shield-check"></i></div><div class="benefit-text"><h3>SECURE PAYMENTS</h3><p>All transactions are encrypted.</p></div></div>
+            <div class="benefit-item"><div class="benefit-icon"><i data-lucide="truck"></i></div><div class="benefit-text"><h3>FIXED DELIVERY</h3><p>Simple and transparent rates.</p></div></div>
         </div>
     </section>
 
@@ -186,146 +132,9 @@
         <div class="container" data-aos="fade-up" data-aos-duration="1000">
             <div class="section-tag">OUR PHILOSOPHY</div>
             <h2 class="philosophy-title">"We believe that <span class="highlight">good food</span> starts with the soil, the hands that tend it, and the respect we give to nature."</h2>
-
             <div class="philosophy-grid">
-                <div class="philosophy-item" data-aos="fade-right" data-aos-delay="200">
-                    <h3>Direct Sourcing</h3>
-                    <p>We partner with trusted farmers across India to bring you the freshest vegetables, harvested at peak ripeness and delivered within 24 hours.</p>
-                </div>
-                <div class="philosophy-item" data-aos="fade-left" data-aos-delay="400">
-                    <h3>Community First</h3>
-                    <p>No middlemen, no compromises—just pure, farm-fresh goodness that supports local communities and ensures fair prices for everyone.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="why-choose-us">
-        <div class="container">
-            <div class="why-header" data-aos="zoom-in">
-                <div class="section-tag">WHY CHOOSE US?</div>
-            </div>
-
-            <div class="file-selection-ui" data-aos="fade-up" data-aos-duration="1000">
-                <div class="file-sidebar">
-                    <div class="file-item active" data-target="quality">
-                        <i data-lucide="file-text"></i>
-                        <span>Quality.pdf</span>
-                    </div>
-                    <div class="file-item" data-target="pricing">
-                        <i data-lucide="file-text"></i>
-                        <span>Pricing.pdf</span>
-                    </div>
-                    <div class="file-item" data-target="delivery">
-                        <i data-lucide="file-text"></i>
-                        <span>Delivery.pdf</span>
-                    </div>
-                    <div class="file-item" data-target="stress">
-                        <i data-lucide="file-text"></i>
-                        <span>Experience.pdf</span>
-                    </div>
-                    <div class="file-item" data-target="ordering">
-                        <i data-lucide="file-text"></i>
-                        <span>Ordering.pdf</span>
-                    </div>
-                </div>
-
-                <div class="file-content-pane">
-                    <div class="content-window active" id="quality">
-                        <div class="content-header">
-                            <div class="window-controls">
-                                <span class="dot-red"></span>
-                                <span class="dot-yellow"></span>
-                                <span class="dot-green"></span>
-                            </div>
-                            <span class="file-name-title">Farm-fresh quality you can trust</span>
-                        </div>
-                        <div class="content-body">
-                            <div class="content-icon"><i data-lucide="gem"></i></div>
-                            <h3>Premium Quality</h3>
-                            <p>We believe quality shouldn't be a luxury. Every vegetable is inspected by hand to ensure it meets our "Fresh-to-Table" standard before it ever reaches your box.</p>
-                            <div class="selection-indicator">
-                                <i data-lucide="check-circle-2"></i> File Selected
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="content-window" id="pricing">
-                        <div class="content-header">
-                            <div class="window-controls">
-                                <span class="dot-red"></span>
-                                <span class="dot-yellow"></span>
-                                <span class="dot-green"></span>
-                            </div>
-                            <span class="file-name-title">Affordable pricing every day</span>
-                        </div>
-                        <div class="content-body">
-                            <div class="content-icon"><i data-lucide="tag"></i></div>
-                            <h3>Fair Value</h3>
-                            <p>By working directly with local farmers, we cut out the middleman costs and pass those savings directly to you. Fresh food, fair prices.</p>
-                            <div class="selection-indicator">
-                                <i data-lucide="check-circle-2"></i> File Selected
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="content-window" id="delivery">
-                        <div class="content-header">
-                            <div class="window-controls">
-                                <span class="dot-red"></span>
-                                <span class="dot-yellow"></span>
-                                <span class="dot-green"></span>
-                            </div>
-                            <span class="file-name-title">Scheduled deliveries you can rely on</span>
-                        </div>
-                        <div class="content-body">
-                            <div class="content-icon"><i data-lucide="calendar"></i></div>
-                            <h3>Reliable Logistics</h3>
-                            <p>Your time is valuable. Our smart delivery network ensures that your harvest arrives exactly when scheduled, maintaining peak freshness.</p>
-                            <div class="selection-indicator">
-                                <i data-lucide="check-circle-2"></i> File Selected
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="content-window" id="stress">
-                        <div class="content-header">
-                            <div class="window-controls">
-                                <span class="dot-red"></span>
-                                <span class="dot-yellow"></span>
-                                <span class="dot-green"></span>
-                            </div>
-                            <span class="file-name-title">Zero stress, smooth experience</span>
-                        </div>
-                        <div class="content-body">
-                            <div class="content-icon"><i data-lucide="smile"></i></div>
-                            <h3>Smooth Service</h3>
-                            <p>We handle the heavy lifting. From the farm to your doorstep, our team ensures a seamless journey so you can focus on cooking great meals.</p>
-                            <div class="selection-indicator">
-                                <i data-lucide="check-circle-2"></i> File Selected
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="content-window" id="ordering">
-                        <div class="content-header">
-                            <div class="window-controls">
-                                <span class="dot-red"></span>
-                                <span class="dot-yellow"></span>
-                                <span class="dot-green"></span>
-                            </div>
-                            <span class="file-name-title">Simple, smart ordering system</span>
-                        </div>
-                        <div class="content-body">
-                            <div class="content-icon"><i data-lucide="smartphone"></i></div>
-                            <h3>Smart Ordering</h3>
-                            <p>Freshness at your fingertips. Our intuitive interface makes it easy to customize your box, track deliveries, and manage your subscription.</p>
-                            <div class="selection-indicator">
-                                <i data-lucide="check-circle-2"></i> File Selected
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div class="philosophy-item" data-aos="fade-right" data-aos-delay="200"><h3>Direct Sourcing</h3><p>We partner with trusted farmers across India to bring you the freshest vegetables.</p></div>
+                <div class="philosophy-item" data-aos="fade-left" data-aos-delay="400"><h3>Community First</h3><p>No middlemen, no compromises—just pure, farm-fresh goodness.</p></div>
             </div>
         </div>
     </section>
@@ -341,44 +150,11 @@
 <footer class="footer">
     <div class="container">
         <div class="footer-grid">
-            <div class="footer-brand">
-                <a href="index.html" class="logo"><span>Kisan</span> to Customer</a>
-                <p>Connecting local farmers directly with health-conscious families. Pure, organic produce delivered within 24 hours of harvest.</p>
-                <div class="social-links">
-                    <a href="#" class="social-link"><i data-lucide="instagram"></i></a>
-                    <a href="#" class="social-link"><i data-lucide="facebook"></i></a>
-                    <a href="#" class="social-link"><i data-lucide="twitter"></i></a>
-                </div>
-            </div>
-            <div class="footer-column">
-                <h3 class="footer-heading">Quick Links</h3>
-                <ul class="footer-links">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="shop.html">Shop Now</a></li>
-                    <li><a href="shop.html#vegetables">Vegetables</a></li>
-                    <li><a href="shop.html#fruits">Fruits</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
-                <h3 class="footer-heading">Support</h3>
-                <ul class="footer-links">
-                    <li><a href="#">Help Center</a></li>
-                    <li><a href="#">Shipping Policy</a></li>
-                    <li><a href="#">Returns</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                </ul>
-            </div>
-            <div class="footer-contact">
-                <h3 class="footer-heading">Contact Us</h3>
-                <p><i data-lucide="map-pin"></i> 123 Farm Road, Green Valley, India</p>
-                <p><i data-lucide="phone"></i> +91 98765 43210</p>
-                <p><i data-lucide="mail"></i> hello@kisantocustomer.com</p>
-            </div>
+            <div class="footer-brand"><a href="index.html" class="logo"><span>Kisan</span> to Customer</a><p>Connecting local farmers directly with health-conscious families.</p></div>
+            <div class="footer-column"><h3 class="footer-heading">Quick Links</h3><ul class="footer-links"><li><a href="index.html">Home</a></li><li><a href="shop.html">Shop Now</a></li></ul></div>
+            <div class="footer-contact"><h3 class="footer-heading">Contact Us</h3><p><i data-lucide="mail"></i> hello@kisantocustomer.com</p></div>
         </div>
-        <div class="footer-bottom">
-            <p>© 2026 Kisan to Customer. All rights reserved.</p>
-            <p>Designed for healthy living.</p>
-        </div>
+        <div class="footer-bottom"><p>© 2026 Kisan to Customer. All rights reserved.</p></div>
     </div>
 </footer>
 
@@ -387,34 +163,63 @@
     AOS.init({ offset: 120, once: true });
     lucide.createIcons();
 
-    const fileItems = document.querySelectorAll('.file-item');
-    const windows = document.querySelectorAll('.content-window');
-    let currentIndex = 0;
+    // Profile Modal Logic
+    const profileOverlay = document.getElementById('profile-overlay');
+    const openProfileBtn = document.getElementById('open-profile');
+    const closeProfileBtn = document.getElementById('close-profile');
+    const saveProfileBtn = document.getElementById('save-profile');
 
-    function selectFile(index) {
-        if (!fileItems[index]) return;
-        fileItems.forEach(item => item.classList.remove('active'));
-        windows.forEach(win => win.classList.remove('active'));
-        fileItems[index].classList.add('active');
-        const targetId = fileItems[index].getAttribute('data-target');
-        const targetWindow = document.getElementById(targetId);
-        if (targetWindow) targetWindow.classList.add('active');
+    openProfileBtn.addEventListener('click', () => profileOverlay.classList.add('active'));
+    closeProfileBtn.addEventListener('click', () => profileOverlay.classList.remove('active'));
+    profileOverlay.addEventListener('click', (e) => { if(e.target === profileOverlay) profileOverlay.classList.remove('active'); });
+
+    // Sprinkle Effect function
+    function createConfetti() {
+        for (let i = 0; i < 50; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.backgroundColor = ['#B8D4E3', '#2D2D2D', '#25D366', '#FFD700'][Math.floor(Math.random() * 4)];
+            confetti.style.animation = `sprinkle ${1 + Math.random() * 2}s linear forwards`;
+            confetti.style.width = (5 + Math.random() * 10) + 'px';
+            confetti.style.height = confetti.style.width;
+            document.body.appendChild(confetti);
+            setTimeout(() => confetti.remove(), 3000);
+        }
     }
 
-    fileItems.forEach((item, index) => {
-        item.addEventListener('click', () => {
-            selectFile(index);
-            currentIndex = index;
-            clearInterval(autoCycle);
-            autoCycle = setInterval(cycle, 4000);
-        });
+    // Profile Save Logic
+    const loadProfile = () => {
+        const p = JSON.parse(localStorage.getItem('kisan_profile') || '{}');
+        if(p.firstName) {
+            document.getElementById('user-first-name').value = p.firstName;
+            document.getElementById('user-surname').value = p.surname;
+            document.getElementById('user-phone').value = p.phone;
+            document.getElementById('user-alt-phone').value = p.altPhone;
+            document.getElementById('user-address').value = p.address;
+        }
+    };
+    loadProfile();
+
+    saveProfileBtn.addEventListener('click', () => {
+        const profile = {
+            firstName: document.getElementById('user-first-name').value,
+            surname: document.getElementById('user-surname').value,
+            phone: document.getElementById('user-phone').value,
+            altPhone: document.getElementById('user-alt-phone').value,
+            address: document.getElementById('user-address').value
+        };
+        if (!profile.firstName || !profile.surname || !profile.phone || !profile.altPhone || !profile.address) {
+            document.getElementById('profile-status').innerText = 'All fields mandatory! ❌';
+            document.getElementById('profile-status').style.color = '#ff5f56';
+            return;
+        }
+        localStorage.setItem('kisan_profile', JSON.stringify(profile));
+        document.getElementById('profile-status').innerText = 'Saved Successfully! ✅';
+        document.getElementById('profile-status').style.color = '#25D366';
+        createConfetti();
+        setTimeout(() => { document.getElementById('profile-status').innerText = ''; }, 3000);
     });
-
-    function cycle() {
-        currentIndex = (currentIndex + 1) % fileItems.length;
-        selectFile(currentIndex);
-    }
-    let autoCycle = setInterval(cycle, 4000);
 </script>
 </body>
 </html>
