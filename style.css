@@ -31,60 +31,111 @@ body {
     padding: 0 40px;
 }
 
-/* Navbar */
+/* Navbar - OPAQUE GLASS EFFECT */
 .nav {
-    padding: 24px 0;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(10px);
+    padding: 16px 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
     position: sticky;
     top: 0;
-    z-index: 1000;
-    border-bottom: 1px solid var(--border-light);
+    z-index: 5000;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
 .nav .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 30px;
 }
 
 .logo {
     text-decoration: none;
-    font-size: 26px;
+    font-size: 20px;
     font-weight: 700;
     color: var(--text-dark);
     letter-spacing: -0.5px;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .logo span {
     color: var(--primary-blue);
 }
 
-nav a {
-    margin: 0 18px;
-    text-decoration: none;
-    color: var(--text-dark);
-    font-size: 15px;
-    font-weight: 500;
-    transition: color 0.3s ease;
-}
-
-nav a:hover {
-    color: var(--primary-blue);
+/* Nav Fruits */
+.nav-fruits {
+    display: flex;
+    gap: 12px;
+    font-size: 20px;
+    user-select: none;
 }
 
 .nav-actions {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.nav-order-btn {
+    padding: 10px 24px !important;
+    font-size: 14px !important;
+}
+
+/* REDESIGNED CART BUTTON */
+.cart-btn {
+    position: relative;
+    background: rgba(184, 212, 227, 0.15);
+    border: 1px solid rgba(184, 212, 227, 0.3);
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--text-dark);
+}
+
+.cart-btn:hover {
+    background: var(--primary-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(184, 212, 227, 0.4);
+}
+
+.cart-btn i, .cart-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--text-dark);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .profile-btn {
     background: #F4F8FA;
     border: none;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px; /* Matched cart btn radius */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -97,9 +148,8 @@ nav a:hover {
 }
 
 .profile-btn svg {
-    width: 20px;
-    height: 20px;
-    color: var(--text-dark);
+    width: 18px;
+    height: 18px;
 }
 
 /* Buttons */
@@ -220,12 +270,12 @@ nav a:hover {
     border-radius: 50%;
 }
 
-/* Swinging Animation Refined with Thick Rope */
+/* Swinging Animation */
 .swing-container {
     display: inline-block;
     position: relative;
     padding: 15px 25px;
-    margin-top: 50px; /* More space for thick rope */
+    margin-top: 50px;
     transform-origin: 50% -50px;
     animation: swing 3.5s ease-in-out infinite;
 }
@@ -233,9 +283,9 @@ nav a:hover {
 .jute-rope {
     position: absolute;
     top: -55px;
-    width: 6px; /* THICKER ROPE */
+    width: 6px;
     height: 70px;
-    background: #B08D57; /* Rich jute brown */
+    background: #B08D57;
     background-image: repeating-linear-gradient(
         0deg,
         rgba(0,0,0,0.2) 0px,
@@ -244,7 +294,6 @@ nav a:hover {
         transparent 6px
     );
     border-radius: 4px;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
 }
 
 .rope-l { left: 20px; transform: rotate(3deg); }
@@ -313,7 +362,7 @@ nav a:hover {
     margin: 0;
 }
 
-/* Benefits Bar - ROTATING MARQUEE */
+/* Benefits Bar */
 .benefits-bar {
     padding: 60px 0;
     background: var(--white);
@@ -424,7 +473,7 @@ nav a:hover {
     line-height: 1.6;
 }
 
-/* File Selection UI - WHY CHOOSE US */
+/* Why Choose Us */
 .why-choose-us {
     padding: 120px 0;
     background-color: transparent;
@@ -830,6 +879,7 @@ nav a:hover {
     .hero-grid { gap: 40px; }
     .footer-grid { grid-template-columns: 1.5fr 1fr 1fr; }
     .footer-contact { grid-column: span 3; }
+    .nav-fruits { display: none; }
 }
 
 @media (max-width: 768px) {
@@ -855,15 +905,6 @@ nav a:hover {
 
     .nav-actions {
         margin-right: 10px;
-    }
-
-    .nav-actions .btn {
-        padding: 10px 20px;
-        font-size: 14px;
-    }
-
-    .mobile-menu-toggle {
-        display: block;
     }
 
     .hero-grid {
