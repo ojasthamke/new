@@ -21,7 +21,7 @@
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 24px 0 0 24px;
-            z-index: 4000;
+            z-index: 6000;
             transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             display: flex;
             flex-direction: column;
@@ -192,37 +192,6 @@
             font-weight: 700;
         }
 
-        /* Cart Badge */
-        .cart-btn {
-            position: relative;
-            background: #F4F8FA;
-            border: none;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        .cart-count {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: var(--primary-blue);
-            color: var(--text-dark);
-            font-size: 10px;
-            font-weight: 800;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid white;
-        }
-
         @media (max-width: 480px) {
             .cart-sidebar { width: calc(100% - 40px); left: 20px; }
             .cart-bottom-bar { min-width: 90%; }
@@ -234,12 +203,14 @@
 <header class="nav">
     <div class="container">
         <a href="index.html" class="logo"><span>Kisan</span> to Customer</a>
-        <nav id="nav-menu">
-            <a href="index.html">Home</a>
-            <a href="#vegetables">Vegetables</a>
-            <a href="#fruits">Fruits</a>
-            <a href="index.html#contact">Contact</a>
-        </nav>
+
+        <div class="nav-fruits">
+            <span>🍎</span>
+            <span>🥭</span>
+            <span>🍇</span>
+            <span>🥝</span>
+        </div>
+
         <div class="nav-actions">
             <button class="cart-btn" id="open-cart" aria-label="Cart">
                 <i data-lucide="shopping-cart"></i>
@@ -249,9 +220,6 @@
                 <i data-lucide="user"></i>
             </button>
         </div>
-        <button class="mobile-menu-toggle" id="menu-toggle" aria-label="Toggle Menu">
-            <i data-lucide="menu"></i>
-        </button>
     </div>
 </header>
 
@@ -502,9 +470,47 @@
     </section>
 </main>
 
-<footer class="footer" style="padding-bottom: 120px;">
+<footer class="footer">
     <div class="container">
-        <p>© Kisan to Customer 2026. All rights reserved.</p>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="logo"><span>Kisan</span> to Customer</a>
+                <p>Connecting local farmers directly with health-conscious families. Pure, organic produce delivered within 24 hours of harvest.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i data-lucide="instagram"></i></a>
+                    <a href="#" class="social-link"><i data-lucide="facebook"></i></a>
+                    <a href="#" class="social-link"><i data-lucide="twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3 class="footer-heading">Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="shop.html">Shop Now</a></li>
+                    <li><a href="#vegetables">Vegetables</a></li>
+                    <li><a href="#fruits">Fruits</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3 class="footer-heading">Support</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Shipping Policy</a></li>
+                    <li><a href="#">Returns</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3 class="footer-heading">Contact Us</h3>
+                <p><i data-lucide="map-pin"></i> 123 Farm Road, Green Valley, India</p>
+                <p><i data-lucide="phone"></i> +91 98765 43210</p>
+                <p><i data-lucide="mail"></i> hello@kisantocustomer.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Kisan to Customer. All rights reserved.</p>
+            <p>Designed for healthy living.</p>
+        </div>
     </div>
 </footer>
 
@@ -525,16 +531,6 @@
         fruit.style.animationDelay = (Math.random() * -15) + 's';
         cartFruitsContainer.appendChild(fruit);
     }
-
-    // Existing Cart & Nav Logic
-    const menuToggle = document.getElementById('menu-toggle');
-    const navMenu = document.getElementById('nav-menu');
-    menuToggle.addEventListener('click', () => {
-        navMenu.classList.toggle('active');
-        const icon = menuToggle.querySelector('i');
-        icon.setAttribute('data-lucide', navMenu.classList.contains('active') ? 'x' : 'menu');
-        lucide.createIcons();
-    });
 
     let cart = [];
     const cartSidebar = document.getElementById('cart-sidebar');
