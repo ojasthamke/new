@@ -8,14 +8,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Arvo:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* Shopping Cart Sidebar - GLASS THEME */
-        .cart-sidebar {
+        /* Shopping Cart & Profile Sidebar - GLASS THEME */
+        .sidebar {
             position: fixed;
             top: 20px;
             right: -420px;
             width: 400px;
             height: calc(100vh - 40px);
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
@@ -28,7 +28,7 @@
             overflow: hidden;
         }
 
-        .cart-sidebar.active {
+        .sidebar.active {
             right: 0;
         }
 
@@ -57,7 +57,7 @@
             100% { transform: translate(0, 0) rotate(360deg); }
         }
 
-        .cart-header {
+        .sidebar-header {
             padding: 30px;
             background: rgba(255, 255, 255, 0.4);
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
@@ -66,13 +66,13 @@
             align-items: center;
         }
 
-        .cart-header h3 {
+        .sidebar-header h3 {
             font-family: var(--font-heading);
             font-size: 22px;
             color: var(--text-dark);
         }
 
-        .close-cart {
+        .close-sidebar {
             background: rgba(255, 255, 255, 0.5);
             border: none;
             width: 36px;
@@ -85,12 +85,60 @@
             justify-content: center;
         }
 
-        .cart-items {
+        .sidebar-content {
             flex-grow: 1;
             overflow-y: auto;
-            padding: 20px;
+            padding: 30px;
         }
 
+        /* Profile Form */
+        .profile-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .form-group input, .form-group textarea {
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.5);
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: var(--primary-blue);
+            background: white;
+        }
+
+        .save-profile-btn {
+            padding: 16px;
+            border-radius: 12px;
+            border: none;
+            background: var(--primary-blue);
+            color: var(--text-dark);
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .save-profile-btn:hover { background: #a5c5d6; }
+
+        /* Cart Items */
         .cart-item {
             display: flex;
             gap: 15px;
@@ -111,29 +159,26 @@
         .cart-item-info h4 { font-size: 15px; margin-bottom: 4px; }
         .cart-item-info p { font-size: 13px; font-weight: 600; color: #4A90E2; }
 
-        .cart-footer {
+        .sidebar-footer {
             padding: 30px;
             background: rgba(255, 255, 255, 0.5);
             border-top: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .cart-total {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            font-weight: 700;
-            font-size: 20px;
-        }
-
         .checkout-btn {
             width: 100%;
             padding: 18px;
-            background: var(--text-dark);
+            background: #25D366; /* WhatsApp Green */
             color: white;
             border: none;
             border-radius: 16px;
             font-weight: 700;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 10px 20px rgba(37, 211, 102, 0.2);
         }
 
         /* Bottom Cart Bar */
@@ -183,8 +228,8 @@
         }
 
         .btn-checkout-bar {
-            background: var(--primary-blue);
-            color: var(--text-dark);
+            background: #25D366;
+            color: white;
             border: none;
             padding: 8px 22px;
             border-radius: 12px;
@@ -193,7 +238,7 @@
         }
 
         @media (max-width: 480px) {
-            .cart-sidebar { width: calc(100% - 40px); left: 20px; }
+            .sidebar { width: calc(100% - 40px); left: 20px; }
             .cart-bottom-bar { min-width: 90%; }
         }
     </style>
@@ -216,28 +261,58 @@
                 <i data-lucide="shopping-cart"></i>
                 <span class="cart-count">0</span>
             </button>
-            <button class="profile-btn" aria-label="Profile">
+            <button class="profile-btn" id="open-profile" aria-label="Profile">
                 <i data-lucide="user"></i>
             </button>
         </div>
     </div>
 </header>
 
-<div class="cart-sidebar" id="cart-sidebar">
-    <div class="floating-fruits-bg" id="floating-fruits"></div>
-    <div class="cart-header">
+<!-- Cart Sidebar -->
+<div class="sidebar" id="cart-sidebar">
+    <div class="floating-fruits-bg"></div>
+    <div class="sidebar-header">
         <h3>Your Basket</h3>
-        <button class="close-cart" id="close-cart"><i data-lucide="x"></i></button>
+        <button class="close-sidebar" id="close-cart"><i data-lucide="x"></i></button>
     </div>
-    <div class="cart-items" id="cart-items">
+    <div class="sidebar-content" id="cart-items">
         <p style="text-align: center; color: #999; margin-top: 40px;">Your basket is empty</p>
     </div>
-    <div class="cart-footer">
-        <div class="cart-total">
+    <div class="sidebar-footer">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: 700; font-size: 20px;">
             <span>Total</span>
             <span id="cart-total-amount">$0.00</span>
         </div>
-        <button class="checkout-btn">Proceed to Checkout</button>
+        <button class="checkout-btn" id="whatsapp-checkout">
+            <i data-lucide="send"></i> Proceed to WhatsApp
+        </button>
+    </div>
+</div>
+
+<!-- Profile Sidebar -->
+<div class="sidebar" id="profile-sidebar">
+    <div class="floating-fruits-bg"></div>
+    <div class="sidebar-header">
+        <h3>My Profile</h3>
+        <button class="close-sidebar" id="close-profile"><i data-lucide="x"></i></button>
+    </div>
+    <div class="sidebar-content">
+        <div class="profile-form">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="user-name" placeholder="Enter your name">
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="user-phone" placeholder="+91 00000 00000">
+            </div>
+            <div class="form-group">
+                <label>Delivery Address</label>
+                <textarea id="user-address" rows="4" placeholder="Enter your full address"></textarea>
+            </div>
+            <button class="save-profile-btn" id="save-profile">Save Information</button>
+            <p id="profile-status" style="font-size: 13px; text-align: center; margin-top: 10px;"></p>
+        </div>
     </div>
 </div>
 
@@ -251,7 +326,7 @@
         </div>
         <div class="cart-bar-actions">
             <button class="btn-view-cart" id="view-cart-btn">View Basket</button>
-            <button class="btn-checkout-bar">Checkout</button>
+            <button class="btn-checkout-bar" id="bar-checkout">Checkout</button>
         </div>
     </div>
 </div>
@@ -376,7 +451,6 @@
         <div class="container">
             <h2 class="section-title"><i data-lucide="apple"></i> Seasonal Fruits</h2>
             <div class="product-grid">
-                <!-- 8 Fruits -->
                 <div class="product-card" data-id="10" data-name="Red Apples" data-price="4.00" data-img="https://images.unsplash.com/photo-1560806887-1e4cd0b6bcd6?auto=format&fit=crop&q=80&w=400">
                     <div class="product-image"><img src="https://images.unsplash.com/photo-1560806887-1e4cd0b6bcd6?auto=format&fit=crop&q=80&w=400" alt="Apple"></div>
                     <div class="product-info">
@@ -517,21 +591,57 @@
 <script>
     lucide.createIcons();
 
+    // 1. ANIMATION & SIDEBARS
     const fruits = ['🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🍆', '🥑', '🥦', '🥬', '🥒', '🌽', '🥕', '🫑', '🥔', '🍠'];
 
-    // CONTINUOUS CART FRUITS
-    const cartFruitsContainer = document.getElementById('floating-fruits');
-    for (let i = 0; i < 15; i++) {
-        const fruit = document.createElement('div');
-        fruit.className = 'floating-fruit';
-        fruit.innerText = fruits[Math.floor(Math.random() * fruits.length)];
-        fruit.style.left = Math.random() * 100 + '%';
-        fruit.style.top = Math.random() * 100 + '%';
-        fruit.style.animationDuration = (10 + Math.random() * 15) + 's';
-        fruit.style.animationDelay = (Math.random() * -15) + 's';
-        cartFruitsContainer.appendChild(fruit);
-    }
+    document.querySelectorAll('.floating-fruits-bg').forEach(container => {
+        for (let i = 0; i < 15; i++) {
+            const fruit = document.createElement('div');
+            fruit.className = 'floating-fruit';
+            fruit.innerText = fruits[Math.floor(Math.random() * fruits.length)];
+            fruit.style.left = Math.random() * 100 + '%';
+            fruit.style.top = Math.random() * 100 + '%';
+            fruit.style.animationDuration = (10 + Math.random() * 15) + 's';
+            fruit.style.animationDelay = (Math.random() * -15) + 's';
+            container.appendChild(fruit);
+        }
+    });
 
+    // 2. PROFILE LOGIC
+    const profileSidebar = document.getElementById('profile-sidebar');
+    const openProfileBtn = document.getElementById('open-profile');
+    const closeProfileBtn = document.getElementById('close-profile');
+    const saveProfileBtn = document.getElementById('save-profile');
+    const profileStatus = document.getElementById('profile-status');
+
+    openProfileBtn.addEventListener('click', () => {
+        profileSidebar.classList.add('active');
+        cartSidebar.classList.remove('active');
+    });
+    closeProfileBtn.addEventListener('click', () => profileSidebar.classList.remove('active'));
+
+    // Load Profile
+    const loadProfile = () => {
+        const profile = JSON.parse(localStorage.getItem('kisan_profile') || '{}');
+        document.getElementById('user-name').value = profile.name || '';
+        document.getElementById('user-phone').value = profile.phone || '';
+        document.getElementById('user-address').value = profile.address || '';
+    };
+    loadProfile();
+
+    saveProfileBtn.addEventListener('click', () => {
+        const profile = {
+            name: document.getElementById('user-name').value,
+            phone: document.getElementById('user-phone').value,
+            address: document.getElementById('user-address').value
+        };
+        localStorage.setItem('kisan_profile', JSON.stringify(profile));
+        profileStatus.innerText = 'Profile saved successfully! ✅';
+        profileStatus.style.color = '#25D366';
+        setTimeout(() => { profileStatus.innerText = ''; }, 3000);
+    });
+
+    // 3. CART LOGIC
     let cart = [];
     const cartSidebar = document.getElementById('cart-sidebar');
     const cartBottomBar = document.getElementById('cart-bottom-bar');
@@ -544,7 +654,10 @@
     const closeCartBtn = document.getElementById('close-cart');
     const viewCartBtn = document.getElementById('view-cart-btn');
 
-    openCartBtn.addEventListener('click', () => cartSidebar.classList.add('active'));
+    openCartBtn.addEventListener('click', () => {
+        cartSidebar.classList.add('active');
+        profileSidebar.classList.remove('active');
+    });
     closeCartBtn.addEventListener('click', () => cartSidebar.classList.remove('active'));
     viewCartBtn.addEventListener('click', () => cartSidebar.classList.add('active'));
 
@@ -598,6 +711,44 @@
         cart = cart.filter(item => item.id !== id);
         updateCartUI();
     };
+
+    // 4. WHATSAPP CHECKOUT LOGIC
+    const handleCheckout = () => {
+        const profile = JSON.parse(localStorage.getItem('kisan_profile') || '{}');
+        if (!profile.name || !profile.phone || !profile.address) {
+            alert('Please complete your profile information first!');
+            profileSidebar.classList.add('active');
+            cartSidebar.classList.remove('active');
+            return;
+        }
+
+        if (cart.length === 0) {
+            alert('Your basket is empty!');
+            return;
+        }
+
+        let message = `*NEW ORDER - Kisan to Customer*\n\n`;
+        message += `*Customer Details:*\n`;
+        message += `Name: ${profile.name}\n`;
+        message += `Phone: ${profile.phone}\n`;
+        message += `Address: ${profile.address}\n\n`;
+
+        message += `*Order Summary:*\n`;
+        cart.forEach(item => {
+            message += `- ${item.name} ($${item.price.toFixed(2)} x ${item.qty})\n`;
+        });
+
+        const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        message += `\n*Total Amount: $${total.toFixed(2)}*`;
+
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappUrl = `https://wa.me/919021107009?text=${encodedMessage}`;
+        window.open(whatsappUrl, '_blank');
+    };
+
+    document.getElementById('whatsapp-checkout').addEventListener('click', handleCheckout);
+    document.getElementById('bar-checkout').addEventListener('click', handleCheckout);
+
 </script>
 </body>
 </html>
