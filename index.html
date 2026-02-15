@@ -16,21 +16,20 @@
 <header class="nav">
     <div class="container">
         <a href="index.html" class="logo"><span>Kisan</span> to Customer</a>
-        <nav id="nav-menu">
-            <a href="index.html#home">Home</a>
-            <a href="shop.html">Products</a>
-            <a href="shop.html">Pricing</a>
-            <a href="#contact">Contact</a>
-        </nav>
+
+        <div class="nav-fruits">
+            <span>🍎</span>
+            <span>🥭</span>
+            <span>🍇</span>
+            <span>🥝</span>
+        </div>
+
         <div class="nav-actions">
-            <a href="shop.html" class="btn btn-primary-light">Order Now</a>
+            <a href="shop.html" class="btn btn-primary-light nav-order-btn">Order Now</a>
             <button class="profile-btn" aria-label="Profile">
                 <i data-lucide="user"></i>
             </button>
         </div>
-        <button class="mobile-menu-toggle" id="menu-toggle" aria-label="Toggle Menu">
-            <i data-lucide="menu"></i>
-        </button>
     </div>
 </header>
 
@@ -351,10 +350,10 @@
             <div class="footer-column">
                 <h3 class="footer-heading">Quick Links</h3>
                 <ul class="footer-links">
-                    <li><a href="#home">Home</a></li>
+                    <li><a href="index.html">Home</a></li>
                     <li><a href="shop.html">Shop Now</a></li>
-                    <li><a href="shop.html">Vegetables</a></li>
-                    <li><a href="shop.html">Fruits</a></li>
+                    <li><a href="shop.html#vegetables">Vegetables</a></li>
+                    <li><a href="shop.html#fruits">Fruits</a></li>
                 </ul>
             </div>
             <div class="footer-column">
@@ -382,29 +381,9 @@
 
 <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 <script>
-    // Initialize AOS
-    AOS.init({
-        offset: 120,
-        once: true,
-    });
-
+    AOS.init({ offset: 120, once: true });
     lucide.createIcons();
 
-    const menuToggle = document.getElementById('menu-toggle');
-    const navMenu = document.getElementById('nav-menu');
-
-    menuToggle.addEventListener('click', () => {
-        navMenu.classList.toggle('active');
-        const icon = menuToggle.querySelector('i');
-        if (navMenu.classList.contains('active')) {
-            icon.setAttribute('data-lucide', 'x');
-        } else {
-            icon.setAttribute('data-lucide', 'menu');
-        }
-        lucide.createIcons();
-    });
-
-    // File Selection Logic
     const fileItems = document.querySelectorAll('.file-item');
     const windows = document.querySelectorAll('.content-window');
     let currentIndex = 0;
@@ -412,18 +391,16 @@
     function selectFile(index) {
         fileItems.forEach(item => item.classList.remove('active'));
         windows.forEach(win => win.classList.remove('active'));
-
         fileItems[index].classList.add('active');
         const targetId = fileItems[index].getAttribute('data-target');
         const targetWindow = document.getElementById(targetId);
-        targetWindow.classList.add('active');
+        if (targetWindow) targetWindow.classList.add('active');
     }
 
     fileItems.forEach((item, index) => {
         item.addEventListener('click', () => {
             selectFile(index);
             currentIndex = index;
-            // Reset timer on manual click
             clearInterval(autoCycle);
             autoCycle = setInterval(cycle, 4000);
         });
@@ -433,7 +410,6 @@
         currentIndex = (currentIndex + 1) % fileItems.length;
         selectFile(currentIndex);
     }
-
     let autoCycle = setInterval(cycle, 4000);
 </script>
 </body>
