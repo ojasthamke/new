@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kisan to Customer | Shop Vegetables & Fruits</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="cart.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Arvo:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+<header class="nav">
+    <div class="container">
+        <a href="index.html" class="logo"><span>Kisan</span> to Customer</a>
+        <div class="nav-fruits"><span>🍎</span><span>🥭</span><span>🍇</span><span>🥝</span></div>
+        <div class="nav-actions">
+            <button class="cart-btn" id="open-cart"><i data-lucide="shopping-cart"></i><span class="cart-count">0</span></button>
+            <button class="profile-btn" id="open-profile"><i data-lucide="user"></i></button>
+        </div>
+    </div>
+</header>
+
+<!-- Cart Sidebar -->
+<div class="sidebar" id="cart-sidebar">
+    <div class="floating-fruits-bg"></div>
+    <div class="sidebar-header"><h3>Your Basket</h3><button class="close-sidebar" id="close-cart"><i data-lucide="x"></i></button></div>
+    <div class="sidebar-content" id="cart-items"></div>
+    <div class="sidebar-footer">
+        <div class="price-breakdown">
+            <div class="price-row"><span>Subtotal</span> <span id="cart-subtotal">₹0.00</span></div>
+            <div class="price-row"><span>Delivery Fee</span> <span>₹30.00</span></div>
+            <div class="price-row"><span>GST</span> <span>₹6.00</span></div>
+            <div class="price-row total-row"><span>Total</span> <span id="cart-total-amount">₹0.00</span></div>
+        </div>
+        <button class="checkout-btn" id="whatsapp-checkout"><i data-lucide="send"></i> Proceed to WhatsApp</button>
+    </div>
+</div>
+
+<!-- Profile Modal Overlay -->
+<div class="modal-overlay" id="profile-overlay">
+    <div class="profile-modal">
+        <button class="close-modal" id="close-profile"><i data-lucide="x"></i></button>
+        <h2>My Profile</h2>
+        <div class="profile-form">
+            <div class="form-group">
+                <label>First Name *</label>
+                <input type="text" id="user-first-name" placeholder="Enter first name">
+            </div>
+            <div class="form-group">
+                <label>Surname *</label>
+                <input type="text" id="user-surname" placeholder="Enter surname">
+            </div>
+            <div class="form-group">
+                <label>Phone Number *</label>
+                <input type="tel" id="user-phone" placeholder="+91 00000 00000">
+            </div>
+            <div class="form-group">
+                <label>Alternate Phone Number *</label>
+                <input type="tel" id="user-alt-phone" placeholder="Alternate phone">
+            </div>
+            <div class="form-group full">
+                <label>Delivery Address *</label>
+                <textarea id="user-address" rows="3" placeholder="House no, Street, Landmark, City"></textarea>
+            </div>
+            <button class="save-profile-btn" id="save-profile">Save Information</button>
+            <p id="profile-status" style="grid-column: span 2; font-size: 13px; text-align: center; margin-top: 10px;"></p>
+        </div>
+    </div>
+</div>
+
+<div class="cart-bottom-bar" id="cart-bottom-bar">
+    <div class="cart-bar-content">
+        <div class="cart-summary">
+            <i data-lucide="shopping-basket"></i>
+            <span id="bottom-cart-count">0 Items</span>
+            <span style="color:rgba(255,255,255,0.2)">|</span>
+            <span id="bottom-cart-total">₹0.00</span>
+        </div>
+        <div class="cart-bar-actions">
+            <button class="btn-view-cart" id="view-cart-btn">View Basket</button>
+            <button class="btn-checkout-bar" id="bar-checkout">Checkout</button>
+        </div>
+    </div>
+</div>
+
+<main>
+    <header class="shop-header"><div class="container"><h1>Fresh Harvest Shop</h1><p>Select the finest organic produce directly from our local farms.</p></div></header>
+    <section id="vegetables" class="shop-section">
+        <div class="container">
+            <h2 class="section-title"><i data-lucide="leaf"></i> Fresh Vegetables</h2>
+            <div class="product-grid" id="veg-grid"></div>
+        </div>
+    </section>
+    <section id="fruits" class="shop-section" style="background-color: #F9FBFC;">
+        <div class="container">
+            <h2 class="section-title"><i data-lucide="apple"></i> Seasonal Fruits</h2>
+            <div class="product-grid" id="fruit-grid"></div>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand"><a href="index.html" class="logo"><span>Kisan</span> to Customer</a><p>Connecting local farmers directly with health-conscious families.</p></div>
+            <div class="footer-column"><h3 class="footer-heading">Quick Links</h3><ul class="footer-links"><li><a href="index.html">Home</a></li><li><a href="shop.html">Shop Now</a></li></ul></div>
+            <div class="footer-contact"><h3 class="footer-heading">Contact Us</h3><p><i data-lucide="mail"></i> hello@kisantocustomer.com</p></div>
+        </div>
+        <div class="footer-bottom"><p>© 2026 Kisan to Customer. All rights reserved.</p></div>
+    </div>
+</footer>
+
+<script>
+    lucide.createIcons();
+
+    // 1. DATA SYNC - AUTO REFRESH ON ADMIN CHANGE
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'kisan_inventory') {
+            location.reload(); // Instantly refresh shop if admin updates website
+        }
+    });
+
+    const defaultProducts = {
+        vegetables: [
+            { id: 1, name: "Organic Potatoes", img: "https://images.unsplash.com/photo-1518977676601-b53f02bad6d3?auto=format&fit=crop&q=80&w=600", prices: {"250gm":10,"500gm":20,"1kg":40,"2kg":75,"3kg":110,"5kg":170} },
+            { id: 2, name: "Fresh Tomatoes", img: "https://images.unsplash.com/photo-1590779033100-9f60705a2f3b?auto=format&fit=crop&q=80&w=600", prices: {"250gm":15,"500gm":30,"1kg":60,"2kg":115,"3kg":170,"5kg":270} }
+        ],
+        fruits: [
+            { id: 10, name: "Red Apples", img: "https://images.unsplash.com/photo-1560806887-1e4cd0b6bcd6?auto=format&fit=crop&q=80&w=600", prices: {"250gm":50,"500gm":95,"1kg":180,"2kg":350,"3kg":520,"5kg":850} }
+        ]
+    };
+
+    function getInventory() {
+        return JSON.parse(localStorage.getItem('kisan_inventory')) || defaultProducts;
+    }
+
+    const inventory = getInventory();
+    const qtyOptions = ["250gm", "500gm", "1kg", "2kg", "3kg", "5kg"];
+
+    const renderGrid = (category, gridId) => {
+        const grid = document.getElementById(gridId);
+        const items = inventory[category] || [];
+        grid.innerHTML = items.map(p => `
+            <div class="product-card" data-id="${p.id}">
+                <div class="product-image"><img src="${p.img}" alt="${p.name}"></div>
+                <div class="product-info">
+                    <h3>${p.name}</h3>
+                    <div class="fancy-qty-selector">
+                        ${qtyOptions.map(o => `<div class="qty-pill ${o==='500gm'?'active':''}" onclick="setPill(this, '${p.id}', '${category}')">${o}</div>`).join('')}
+                    </div>
+                    <div class="product-meta">
+                        <span class="product-price">₹${(p.prices['500gm'] || 0).toFixed(2)}</span>
+                    </div>
+                    <button class="add-to-cart-btn btn-primary-light" onclick="handleAddToCart('${p.id}', '${category}')">
+                        <i data-lucide="shopping-cart"></i> Add to Cart
+                    </button>
+                </div>
+            </div>
+        `).join('');
+        lucide.createIcons();
+    };
+
+    window.setPill = (pill, pId, category) => {
+        pill.parentElement.querySelectorAll('.qty-pill').forEach(el => el.classList.remove('active'));
+        pill.classList.add('active');
+        const weight = pill.innerText;
+        const product = inventory[category].find(p => p.id == pId);
+        const price = product.prices[weight] || 0;
+
+        const priceEl = pill.closest('.product-info').querySelector('.product-price');
+        priceEl.innerText = `₹${price.toFixed(2)}`;
+        priceEl.classList.remove('price-pop');
+        void priceEl.offsetWidth;
+        priceEl.classList.add('price-pop');
+    };
+
+    renderGrid('vegetables', 'veg-grid');
+    renderGrid('fruits', 'fruit-grid');
+
+    // 2. SIDEBARS & PROFILE
+    const profileOverlay = document.getElementById('profile-overlay');
+    const openProfileBtn = document.getElementById('open-profile');
+    const closeProfileBtn = document.getElementById('close-profile');
+    const saveProfileBtn = document.getElementById('save-profile');
+    const cartSidebar = document.getElementById('cart-sidebar');
+    const openCartBtn = document.getElementById('open-cart');
+    const closeCartBtn = document.getElementById('close-cart');
+
+    openProfileBtn.addEventListener('click', () => { profileOverlay.classList.add('active'); cartSidebar.classList.remove('active'); });
+    closeProfileBtn.addEventListener('click', () => profileOverlay.classList.remove('active'));
+    profileOverlay.addEventListener('click', (e) => { if(e.target === profileOverlay) profileOverlay.classList.remove('active'); });
+
+    openCartBtn.addEventListener('click', () => { cartSidebar.classList.add('active'); profileOverlay.classList.remove('active'); });
+    closeCartBtn.addEventListener('click', () => cartSidebar.classList.remove('active'));
+
+    function createConfetti() {
+        for (let i = 0; i < 50; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.backgroundColor = ['#B8D4E3', '#2D2D2D', '#25D366', '#FFD700'][Math.floor(Math.random() * 4)];
+            confetti.style.animation = `sprinkle ${1 + Math.random() * 2}s linear forwards`;
+            document.body.appendChild(confetti);
+            setTimeout(() => confetti.remove(), 3000);
+        }
+    }
+
+    const loadProfile = () => {
+        const p = JSON.parse(localStorage.getItem('kisan_profile') || '{}');
+        if(p.firstName) {
+            document.getElementById('user-first-name').value = p.firstName;
+            document.getElementById('user-surname').value = p.surname;
+            document.getElementById('user-phone').value = p.phone;
+            document.getElementById('user-alt-phone').value = p.altPhone;
+            document.getElementById('user-address').value = p.address;
+        }
+    };
+    loadProfile();
+
+    saveProfileBtn.addEventListener('click', () => {
+        const profile = {
+            firstName: document.getElementById('user-first-name').value,
+            surname: document.getElementById('user-surname').value,
+            phone: document.getElementById('user-phone').value,
+            altPhone: document.getElementById('user-alt-phone').value,
+            address: document.getElementById('user-address').value
+        };
+        if (!profile.firstName || !profile.surname || !profile.phone || !profile.altPhone || !profile.address) {
+            document.getElementById('profile-status').innerText = 'All fields mandatory! ❌';
+            document.getElementById('profile-status').style.color = '#ff5f56';
+            return;
+        }
+        localStorage.setItem('kisan_profile', JSON.stringify(profile));
+        document.getElementById('profile-status').innerText = 'Saved Successfully! ✅';
+        document.getElementById('profile-status').style.color = '#25D366';
+        createConfetti();
+        setTimeout(() => { document.getElementById('profile-status').innerText = ''; }, 3000);
+    });
+
+    // 3. CART LOGIC
+    let cart = [];
+    const cartCountEl = document.querySelector('.cart-count');
+    const bottomCartCountEl = document.getElementById('bottom-cart-count');
+    const bottomCartTotalEl = document.getElementById('bottom-cart-total');
+    const cartItemsEl = document.getElementById('cart-items');
+    const subtotalEl = document.getElementById('cart-subtotal');
+    const totalEl = document.getElementById('cart-total-amount');
+
+    window.handleAddToCart = (pId, category) => {
+        const card = document.querySelector(`.product-card[data-id="${pId}"]`);
+        const weight = card.querySelector('.qty-pill.active').innerText;
+        const product = inventory[category].find(p => p.id == pId);
+        const price = product.prices[weight] || 0;
+
+        const existing = cart.find(item => item.id == pId && item.weight === weight);
+        if (existing) {
+            existing.qty++;
+        } else {
+            cart.push({ id: pId, name: product.name, img: product.img, weight, price, qty: 1 });
+        }
+        updateUI();
+    };
+
+    function updateUI() {
+        const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+        cartCountEl.innerText = totalItems;
+        bottomCartCountEl.innerText = `${totalItems} Items`;
+        document.getElementById('cart-bottom-bar').classList.toggle('active', totalItems > 0);
+
+        if (cart.length === 0) {
+            cartItemsEl.innerHTML = '<p style="text-align: center; color: #999; margin-top: 40px;">Your basket is empty</p>';
+            subtotalEl.innerText = totalEl.innerText = bottomCartTotalEl.innerText = "₹0.00";
+        } else {
+            cartItemsEl.innerHTML = cart.map((item, index) => `
+                <div class="cart-item">
+                    <img src="${item.img}" class="cart-item-img">
+                    <div class="cart-item-info">
+                        <h4>${item.name} (${item.weight})</h4>
+                        <p>₹${item.price.toFixed(2)} x ${item.qty}</p>
+                    </div>
+                    <button onclick="removeItem(${index})" style="background:none; border:none; color:#ff5f56; cursor:pointer"><i data-lucide="trash-2"></i></button>
+                </div>
+            `).join('');
+            lucide.createIcons();
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const total = subtotal + 36; // 30 delivery + 6 GST
+            subtotalEl.innerText = `₹${subtotal.toFixed(2)}`;
+            totalEl.innerText = bottomCartTotalEl.innerText = `₹${total.toFixed(2)}`;
+        }
+    }
+
+    window.removeItem = (index) => { cart.splice(index, 1); updateUI(); };
+
+    const handleCheckout = () => {
+        const p = JSON.parse(localStorage.getItem('kisan_profile') || '{}');
+        if (!p.firstName || !p.surname || !p.phone || !p.altPhone || !p.address) {
+            alert('Please complete profile!');
+            profileOverlay.classList.add('active');
+            return;
+        }
+        if (cart.length === 0) return alert('Cart is empty!');
+
+        let msg = `*NEW ORDER - Kisan to Customer*\n\n*Customer:* ${p.firstName} ${p.surname}\n*Phone:* ${p.phone}\n*Alt:* ${p.altPhone}\n*Address:* ${p.address}\n\n*Order:*\n`;
+        cart.forEach(i => msg += `- ${i.name} (${i.weight}) x ${i.qty}: ₹${(i.price * i.qty).toFixed(2)}\n`);
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        msg += `\nSubtotal: ₹${subtotal.toFixed(2)}\nDelivery: ₹30.00\nGST: ₹6.00\n*TOTAL: ₹${(subtotal + 36).toFixed(2)}*`;
+        window.open(`https://wa.me/919021107009?text=${encodeURIComponent(msg)}`, '_blank');
+    };
+
+    document.getElementById('whatsapp-checkout').addEventListener('click', handleCheckout);
+    document.getElementById('bar-checkout').addEventListener('click', handleCheckout);
+    document.getElementById('view-cart-btn').addEventListener('click', () => cartSidebar.classList.add('active'));
+
+    const fruitsBg = ['🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🍆', '🥑', '🥦', '🥬', '🥒', '🌽', '🥕', '🫑', '🥔', '🍠'];
+    document.querySelectorAll('.floating-fruits-bg').forEach(container => {
+        for (let i = 0; i < 15; i++) {
+            const f = document.createElement('div'); f.className = 'floating-fruit'; f.innerText = fruitsBg[Math.floor(Math.random() * fruitsBg.length)];
+            f.style.left = Math.random() * 100 + '%'; f.style.top = Math.random() * 100 + '%';
+            f.style.animationDuration = (15 + Math.random() * 10) + 's'; container.appendChild(f);
+        }
+    });
+</script>
+</body>
+</html>
