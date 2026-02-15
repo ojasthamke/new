@@ -115,7 +115,13 @@
 <script>
     lucide.createIcons();
 
-    // 1. DATA SYNC - LOAD FROM ADMIN (LOCALSTORAGE)
+    // 1. DATA SYNC - AUTO REFRESH ON ADMIN CHANGE
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'kisan_inventory') {
+            location.reload(); // Instantly refresh shop if admin updates website
+        }
+    });
+
     const defaultProducts = {
         vegetables: [
             { id: 1, name: "Organic Potatoes", img: "https://images.unsplash.com/photo-1518977676601-b53f02bad6d3?auto=format&fit=crop&q=80&w=600", prices: {"250gm":10,"500gm":20,"1kg":40,"2kg":75,"3kg":110,"5kg":170} },
