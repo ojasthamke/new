@@ -3,18 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kisan to Customer | Shop Vegetables & Fruits</title>
+    <title>Apli Bhaji | Shop Fresh Vegetables & Fruits</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="cart.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Arvo:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Floating Savings Bar */
+        .savings-floating-bar {
+            position: fixed;
+            top: 100px;
+            left: 20px;
+            background: #22c55e;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-weight: 800;
+            box-shadow: 0 10px 25px rgba(34, 197, 94, 0.3);
+            z-index: 4000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(-150%);
+            transition: 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            pointer-events: none;
+        }
+        .savings-floating-bar.active { transform: translateX(0); }
+        .savings-floating-bar i { width: 20px; height: 20px; }
+
+        /* ABSOLUTE BOTTOM TRUSTED BAR */
+        .trusted-badge-floating {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background: #fdfdfd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
+            border-top: 1.5px solid rgba(34, 197, 94, 0.15);
+            z-index: 9999;
+            pointer-events: none;
+            overflow: hidden;
+            gap: 12px;
+        }
+
+        .badge-icon-box {
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .badge-icon-box i {
+            color: #22c55e;
+            width: 20px;
+            height: 20px;
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: sequentialTick 18s infinite linear;
+        }
+
+        .scrolling-text-wrapper {
+            height: 20px;
+            overflow: hidden;
+        }
+
+        .scrolling-text-track {
+            display: flex;
+            flex-direction: column;
+            animation: sequentialText 18s infinite cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        .scrolling-text-track span {
+            height: 20px;
+            font-size: 13px;
+            font-weight: 800;
+            color: #2D2D2D;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        @keyframes sequentialTick {
+            /* 6 items, each 16.66% (3s) */
+            /* Start of each 3s block: Draw the tick quickly */
+            0%, 16.66%, 33.33%, 50%, 66.66%, 83.33% { stroke-dashoffset: 100; transform: scale(0.8); }
+            3%, 19.66%, 36.33%, 53%, 69.66%, 86.33% { stroke-dashoffset: 0; transform: scale(1.1); }
+            13.66%, 30.33%, 47%, 63.66%, 80.33%, 97% { stroke-dashoffset: 0; transform: scale(1); }
+            16.65%, 33.32%, 49.99%, 66.65%, 83.32%, 99.99% { stroke-dashoffset: 100; transform: scale(0.8); }
+        }
+
+        @keyframes sequentialText {
+            /* 0% to 16.66% is 1st item, etc. */
+            0%, 14% { transform: translateY(0); }
+            16.66%, 30.66% { transform: translateY(-20px); }
+            33.33%, 47.33% { transform: translateY(-40px); }
+            50%, 64% { transform: translateY(-60px); }
+            66.66%, 80.66% { transform: translateY(-80px); }
+            83.33%, 97.33% { transform: translateY(-100px); }
+            100% { transform: translateY(0); }
+        }
+
+        /* Adjust bottom bar position so it doesn't cover content */
+        .cart-bottom-bar.active { transform: translateX(-50%) translateY(-40px); }
+        body { padding-bottom: 40px; } /* Prevent footer overlap */
+
+        /* Benefits Bar */
+        .shop-benefits { background: #fff; border-bottom: 1px solid var(--border-light); padding: 40px 0; overflow: hidden; }
+        .benefits-track { display: flex; width: max-content; animation: scroll 40s linear infinite; }
+        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        .benefit-item { display: flex; align-items: center; gap: 15px; padding: 0 40px; flex-shrink: 0; }
+        .benefit-icon { width: 40px; height: 40px; background: #F4F8FA; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+        .benefit-icon svg { width: 18px; height: 18px; color: var(--text-dark); }
+        .benefit-text h3 { font-size: 11px; font-weight: 800; margin-bottom: 2px; letter-spacing: 0.5px; }
+        .benefit-text p { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
+
+        /* Price Animation */
+        .price-container { display: flex; align-items: center; gap: 8px; min-height: 30px; flex-wrap: wrap; }
+        .product-mrp { font-size: 14px; color: #94a3b8; font-weight: 500; position: relative; display: inline-block; }
+        .product-mrp::after { content: ""; position: absolute; left: 0; top: 50%; width: 0; height: 1.5px; background: #ef4444; transition: width 0.6s cubic-bezier(0.65, 0, 0.35, 1); }
+        .product-card:hover .product-mrp::after, .price-animate .product-mrp::after { width: 100%; }
+        .product-price { font-size: 20px; font-weight: 700; color: var(--text-dark); opacity: 0; transform: translateY(5px); transition: all 0.4s ease 0.3s; }
+        .product-card:hover .product-price, .price-animate .product-price { opacity: 1; transform: translateY(0); }
+
+        .percentage-off {
+            background: #22c55e;
+            color: white;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 6px;
+            margin-left: 5px;
+            display: inline-block;
+            box-shadow: 0 4px 10px rgba(34, 197, 94, 0.2);
+            -webkit-font-smoothing: antialiased;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+            animation: cleanPulse 2s infinite ease-in-out;
+            text-transform: uppercase;
+        }
+        @keyframes cleanPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+
+        .badge-offer { position: absolute; top: 15px; left: 15px; background: #ef4444; color: white; padding: 5px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; z-index: 10; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3); }
+        .product-card.out-of-stock { opacity: 0.6; pointer-events: none; }
+        .add-to-cart-btn:disabled { background: #64748b !important; color: #fff !important; cursor: not-allowed; }
+
+        .quality-banner {
+            background: #2D2D2D;
+            position: relative;
+            overflow: hidden;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            margin-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .quality-banner::after { content: ""; position: absolute; top: 0; left: -150%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent); transform: skewX(-25deg); animation: sweep 4s infinite ease-in-out; }
+        @keyframes sweep { 0% { left: -150%; } 30% { left: 150%; } 100% { left: 150%; } }
+    </style>
 </head>
 <body>
 
+<div id="savings-bar" class="savings-floating-bar">
+    <i data-lucide="sparkles"></i>
+    <span>You've saved ₹<span id="savings-amount">0.00</span> on this order!</span>
+</div>
+
+<!-- Absolute Bottom Trusted Bar -->
+<div class="trusted-badge-floating">
+    <div class="badge-icon-box">
+        <i data-lucide="check-circle"></i>
+    </div>
+    <div class="scrolling-text-wrapper">
+        <div class="scrolling-text-track">
+            <span>100% Trusted</span>
+            <span>Lowest Rates, Best Quality</span>
+            <span>100% Fresh Vegetables</span>
+            <span>Direct From Farm</span>
+            <span>Scheduled Delivery</span>
+            <span>Fixed Delivery Rates</span>
+        </div>
+    </div>
+</div>
+
 <header class="nav">
     <div class="container">
-        <a href="index.html" class="logo"><span>Kisan</span> to Customer</a>
-        <div class="nav-fruits"><span>🍎</span><span>🥭</span><span>🍇</span><span>🥝</span></div>
+        <a href="index.html" class="logo"><span>Apli</span> Bhaji</a>
         <div class="nav-actions">
             <button class="cart-btn" id="open-cart"><i data-lucide="shopping-cart"></i><span class="cart-count">0</span></button>
             <button class="profile-btn" id="open-profile"><i data-lucide="user"></i></button>
@@ -22,48 +209,31 @@
     </div>
 </header>
 
-<!-- Cart Sidebar -->
+<!-- Sidebar & Modals -->
 <div class="sidebar" id="cart-sidebar">
     <div class="floating-fruits-bg"></div>
     <div class="sidebar-header"><h3>Your Basket</h3><button class="close-sidebar" id="close-cart"><i data-lucide="x"></i></button></div>
     <div class="sidebar-content" id="cart-items"></div>
     <div class="sidebar-footer">
         <div class="price-breakdown">
-            <div class="price-row"><span>Subtotal</span> <span id="cart-subtotal">₹0.00</span></div>
-            <div class="price-row"><span>Delivery Fee</span> <span>₹30.00</span></div>
-            <div class="price-row"><span>GST</span> <span>₹6.00</span></div>
-            <div class="price-row total-row"><span>Total</span> <span id="cart-total-amount">₹0.00</span></div>
+            <div class="price-row"><span>Cart Total (MRP)</span> <span id="cart-mrp-total">₹0.00</span></div>
+            <div class="price-row" style="color: #22c55e; font-weight: 700;"><span>Total Savings</span> <span id="cart-savings-total">-₹0.00</span></div>
+            <div class="price-row total-row"><span>Final Payable</span> <span id="cart-total-amount">₹0.00</span></div>
         </div>
         <button class="checkout-btn" id="whatsapp-checkout"><i data-lucide="send"></i> Proceed to WhatsApp</button>
     </div>
 </div>
 
-<!-- Profile Modal Overlay -->
 <div class="modal-overlay" id="profile-overlay">
     <div class="profile-modal">
         <button class="close-modal" id="close-profile"><i data-lucide="x"></i></button>
         <h2>My Profile</h2>
         <div class="profile-form">
-            <div class="form-group">
-                <label>First Name *</label>
-                <input type="text" id="user-first-name" placeholder="Enter first name">
-            </div>
-            <div class="form-group">
-                <label>Surname *</label>
-                <input type="text" id="user-surname" placeholder="Enter surname">
-            </div>
-            <div class="form-group">
-                <label>Phone Number *</label>
-                <input type="tel" id="user-phone" placeholder="+91 00000 00000">
-            </div>
-            <div class="form-group">
-                <label>Alternate Phone Number *</label>
-                <input type="tel" id="user-alt-phone" placeholder="Alternate phone">
-            </div>
-            <div class="form-group full">
-                <label>Delivery Address *</label>
-                <textarea id="user-address" rows="3" placeholder="House no, Street, Landmark, City"></textarea>
-            </div>
+            <div class="form-group"><label>First Name *</label><input type="text" id="user-first-name" placeholder="Enter first name"></div>
+            <div class="form-group"><label>Surname *</label><input type="text" id="user-surname" placeholder="Enter surname"></div>
+            <div class="form-group"><label>Phone Number *</label><input type="tel" id="user-phone" placeholder="+91 00000 00000"></div>
+            <div class="form-group"><label>Alternate Phone Number *</label><input type="tel" id="user-alt-phone" placeholder="Alternate phone"></div>
+            <div class="form-group full"><label>Delivery Address *</label><textarea id="user-address" rows="3" placeholder="House no, Street, Landmark, City"></textarea></div>
             <button class="save-profile-btn" id="save-profile">Save Information</button>
             <p id="profile-status" style="grid-column: span 2; font-size: 13px; text-align: center; margin-top: 10px;"></p>
         </div>
@@ -72,31 +242,47 @@
 
 <div class="cart-bottom-bar" id="cart-bottom-bar">
     <div class="cart-bar-content">
-        <div class="cart-summary">
-            <i data-lucide="shopping-basket"></i>
-            <span id="bottom-cart-count">0 Items</span>
-            <span style="color:rgba(255,255,255,0.2)">|</span>
-            <span id="bottom-cart-total">₹0.00</span>
-        </div>
-        <div class="cart-bar-actions">
-            <button class="btn-view-cart" id="view-cart-btn">View Basket</button>
-            <button class="btn-checkout-bar" id="bar-checkout">Checkout</button>
-        </div>
+        <div class="cart-summary"><i data-lucide="shopping-basket"></i> <span id="bottom-cart-count">0 Items</span> <span style="color:rgba(255,255,255,0.2)">|</span> <span id="bottom-cart-total">₹0.00</span></div>
+        <div class="cart-bar-actions"><button class="btn-view-cart" id="view-cart-btn">View Basket</button><button class="btn-checkout-bar" id="bar-checkout">Checkout</button></div>
     </div>
 </div>
 
 <main>
-    <header class="shop-header"><div class="container"><h1>Fresh Harvest Shop</h1><p>Select the finest organic produce directly from our local farms.</p></div></header>
+    <section class="shop-benefits">
+        <div class="benefits-track">
+            <div class="benefit-item"><div class="benefit-icon"><i data-lucide="shield-check"></i></div><div class="benefit-text"><h3>SECURE PAYMENTS</h3><p>All transactions are encrypted.</p></div></div>
+            <div class="benefit-item"><div class="benefit-icon"><i data-lucide="truck"></i></div><div class="benefit-text"><h3>FIXED DELIVERY</h3><p>Simple and transparent rates.</p></div></div>
+            <div class="benefit-item"><div class="benefit-icon"><i data-lucide="calendar"></i></div><div class="benefit-text"><h3>SCHEDULED</h3><p>Deliveries you can rely on.</p></div></div>
+            <div class="benefit-item"><div class="benefit-icon"><i data-lucide="headphones"></i></div><div class="benefit-text"><h3>24/7 SUPPORT</h3><p>Always here to assist you.</p></div></div>
+            <div class="benefit-item"><div class="benefit-icon"><i data-lucide="shield-check"></i></div><div class="benefit-text"><h3>SECURE PAYMENTS</h3><p>All transactions are encrypted.</p></div></div>
+            <div class="benefit-item"><div class="benefit-icon"><i data-lucide="truck"></i></div><div class="benefit-text"><h3>FIXED DELIVERY</h3><p>Simple and transparent rates.</p></div></div>
+        </div>
+    </section>
+
+    <header class="shop-header"><div class="container"><h1>Fresh Harvest Shop</h1><p>Premium quality organic produce directly from our local farms.</p></div></header>
+
     <section id="vegetables" class="shop-section">
         <div class="container">
             <h2 class="section-title"><i data-lucide="leaf"></i> Fresh Vegetables</h2>
             <div class="product-grid" id="veg-grid"></div>
         </div>
     </section>
+
     <section id="fruits" class="shop-section" style="background-color: #F9FBFC;">
         <div class="container">
             <h2 class="section-title"><i data-lucide="apple"></i> Seasonal Fruits</h2>
             <div class="product-grid" id="fruit-grid"></div>
+        </div>
+    </section>
+
+    <section class="philosophy-teaser">
+        <div class="container">
+            <div class="section-tag">OUR PHILOSOPHY</div>
+            <h2>"We believe that <span style="color:var(--primary-blue)">good food</span> starts with the soil and the respect we give to nature."</h2>
+            <div class="hero-trust" style="justify-content: center; margin-top: 20px;">
+                <div class="trust-item"><span class="dot"></span><span>Direct From Farm</span></div>
+                <div class="trust-item"><span class="dot" style="background:#25D366"></span><span>100% Organic</span></div>
+            </div>
         </div>
     </section>
 </main>
@@ -104,162 +290,128 @@
 <footer class="footer">
     <div class="container">
         <div class="footer-grid">
-            <div class="footer-brand"><a href="index.html" class="logo"><span>Kisan</span> to Customer</a><p>Connecting local farmers directly with health-conscious families.</p></div>
+            <div class="footer-brand"><a href="index.html" class="logo"><span>Apli</span> Bhaji</a><p>Connecting local farmers directly with health-conscious families.</p></div>
             <div class="footer-column"><h3 class="footer-heading">Quick Links</h3><ul class="footer-links"><li><a href="index.html">Home</a></li><li><a href="shop.html">Shop Now</a></li></ul></div>
-            <div class="footer-contact"><h3 class="footer-heading">Contact Us</h3><p><i data-lucide="mail"></i> hello@kisantocustomer.com</p></div>
+            <div class="footer-contact"><h3 class="footer-heading">Contact Us</h3><p><i data-lucide="mail"></i> hello@aplibhaji.com</p></div>
         </div>
-        <div class="footer-bottom"><p>© 2026 Kisan to Customer. All rights reserved.</p></div>
+        <div class="footer-bottom"><p>© 2026 Apli Bhaji. All rights reserved.</p></div>
     </div>
 </footer>
 
 <script>
     lucide.createIcons();
 
-    // 1. DATA SYNC - AUTO REFRESH ON ADMIN CHANGE
     window.addEventListener('storage', (e) => {
-        if (e.key === 'kisan_inventory') {
-            location.reload(); // Instantly refresh shop if admin updates website
-        }
+        if (e.key === 'kisan_inventory') location.reload();
     });
 
-    const defaultProducts = {
-        vegetables: [
-            { id: 1, name: "Organic Potatoes", img: "https://images.unsplash.com/photo-1518977676601-b53f02bad6d3?auto=format&fit=crop&q=80&w=600", prices: {"250gm":10,"500gm":20,"1kg":40,"2kg":75,"3kg":110,"5kg":170} },
-            { id: 2, name: "Fresh Tomatoes", img: "https://images.unsplash.com/photo-1590779033100-9f60705a2f3b?auto=format&fit=crop&q=80&w=600", prices: {"250gm":15,"500gm":30,"1kg":60,"2kg":115,"3kg":170,"5kg":270} }
-        ],
-        fruits: [
-            { id: 10, name: "Red Apples", img: "https://images.unsplash.com/photo-1560806887-1e4cd0b6bcd6?auto=format&fit=crop&q=80&w=600", prices: {"250gm":50,"500gm":95,"1kg":180,"2kg":350,"3kg":520,"5kg":850} }
-        ]
-    };
-
-    function getInventory() {
-        return JSON.parse(localStorage.getItem('kisan_inventory')) || defaultProducts;
-    }
-
+    const defaultProducts = { vegetables: [], fruits: [] };
+    function getInventory() { return JSON.parse(localStorage.getItem('kisan_inventory')) || defaultProducts; }
     const inventory = getInventory();
     const qtyOptions = ["250gm", "500gm", "1kg", "2kg", "3kg", "5kg"];
 
     const renderGrid = (category, gridId) => {
         const grid = document.getElementById(gridId);
         const items = inventory[category] || [];
-        grid.innerHTML = items.map(p => `
-            <div class="product-card" data-id="${p.id}">
-                <div class="product-image"><img src="${p.img}" alt="${p.name}"></div>
-                <div class="product-info">
-                    <h3>${p.name}</h3>
-                    <div class="fancy-qty-selector">
-                        ${qtyOptions.map(o => `<div class="qty-pill ${o==='500gm'?'active':''}" onclick="setPill(this, '${p.id}', '${category}')">${o}</div>`).join('')}
+        if (items.length === 0) { grid.innerHTML = '<p style="color:#94a3b8; font-style:italic; padding: 20px;">Coming soon...</p>'; return; }
+
+        grid.innerHTML = items.map(p => {
+            const availableWeights = qtyOptions.filter(o => (p.prices[o] || 0) > 0);
+            if (availableWeights.length === 0) return '';
+
+            const defaultWeight = availableWeights.includes('500gm') ? '500gm' : availableWeights[0];
+            const sellingPrice = p.prices[defaultWeight] || 0;
+            const mrp = p.mrps ? (p.mrps[defaultWeight] || 0) : sellingPrice;
+            const discount = mrp > sellingPrice ? Math.round(((mrp - sellingPrice) / mrp) * 100) : 0;
+
+            return `
+            <div class="product-card ${!p.inStock ? 'out-of-stock' : ''} price-animate" data-id="${p.id}" data-category="${category}">
+                <div class="product-image">
+                    <img src="${p.img}" alt="${p.name}">
+                    ${p.offer ? '<span class="badge-offer">OFFER</span>' : ''}
+                </div>
+                <div class="product-info" style="padding-bottom:0px;">
+                    <div style="padding: 25px 25px 0 25px;">
+                        <h3>${p.name}</h3>
+                        <div class="fancy-qty-selector">
+                            ${availableWeights.map(o => `<div class="qty-pill ${o===defaultWeight?'active':''}" onclick="setPill(this, '${p.id}', '${category}')">${o}</div>`).join('')}
+                        </div>
+                        <div class="product-meta">
+                            <div class="price-container">
+                                ${mrp > sellingPrice ? `<span class="product-mrp">₹${mrp.toFixed(2)}</span>` : ''}
+                                <span class="product-price" style="opacity: 1; transform: none;">₹${sellingPrice.toFixed(2)}</span>
+                                ${discount > 0 ? `<span class="percentage-off">${discount}% OFF FROM MARKET RATES</span>` : ''}
+                            </div>
+                        </div>
+                        <button class="add-to-cart-btn btn-primary-light" onclick="handleAddToCart('${p.id}', '${category}')" ${!p.inStock ? 'disabled' : ''}>
+                            <i data-lucide="shopping-cart"></i> ${p.inStock ? 'Add to Cart' : 'Out of Stock'}
+                        </button>
                     </div>
-                    <div class="product-meta">
-                        <span class="product-price">₹${(p.prices['500gm'] || 0).toFixed(2)}</span>
-                    </div>
-                    <button class="add-to-cart-btn btn-primary-light" onclick="handleAddToCart('${p.id}', '${category}')">
-                        <i data-lucide="shopping-cart"></i> Add to Cart
-                    </button>
+                    <div class="quality-banner">Lowest Rate, Highest Quality</div>
                 </div>
             </div>
-        `).join('');
+            `;
+        }).join('');
         lucide.createIcons();
     };
 
     window.setPill = (pill, pId, category) => {
+        const card = pill.closest('.product-card');
+        card.classList.remove('price-animate');
+        void card.offsetWidth;
+        card.classList.add('price-animate');
         pill.parentElement.querySelectorAll('.qty-pill').forEach(el => el.classList.remove('active'));
         pill.classList.add('active');
         const weight = pill.innerText;
         const product = inventory[category].find(p => p.id == pId);
         const price = product.prices[weight] || 0;
-
-        const priceEl = pill.closest('.product-info').querySelector('.product-price');
+        const mrp = product.mrps ? (product.mrps[weight] || 0) : 0;
+        const discount = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
+        const priceEl = card.querySelector('.product-price');
         priceEl.innerText = `₹${price.toFixed(2)}`;
-        priceEl.classList.remove('price-pop');
-        void priceEl.offsetWidth;
-        priceEl.classList.add('price-pop');
+        const priceContainer = card.querySelector('.price-container');
+        const oldMrp = priceContainer.querySelector('.product-mrp');
+        if (oldMrp) oldMrp.remove();
+        if (mrp > price) {
+            const mrpEl = document.createElement('span');
+            mrpEl.className = 'product-mrp';
+            mrpEl.innerText = `₹${mrp.toFixed(2)}`;
+            priceContainer.prepend(mrpEl);
+        }
+        const oldDiscount = priceContainer.querySelector('.percentage-off');
+        if (oldDiscount) oldDiscount.remove();
+        if (discount > 0) {
+            const discEl = document.createElement('span');
+            discEl.className = 'percentage-off';
+            discEl.innerText = `${discount}% OFF FROM MARKET RATES`;
+            priceContainer.appendChild(discEl);
+        }
     };
 
     renderGrid('vegetables', 'veg-grid');
     renderGrid('fruits', 'fruit-grid');
 
-    // 2. SIDEBARS & PROFILE
-    const profileOverlay = document.getElementById('profile-overlay');
-    const openProfileBtn = document.getElementById('open-profile');
-    const closeProfileBtn = document.getElementById('close-profile');
-    const saveProfileBtn = document.getElementById('save-profile');
-    const cartSidebar = document.getElementById('cart-sidebar');
-    const openCartBtn = document.getElementById('open-cart');
-    const closeCartBtn = document.getElementById('close-cart');
-
-    openProfileBtn.addEventListener('click', () => { profileOverlay.classList.add('active'); cartSidebar.classList.remove('active'); });
-    closeProfileBtn.addEventListener('click', () => profileOverlay.classList.remove('active'));
-    profileOverlay.addEventListener('click', (e) => { if(e.target === profileOverlay) profileOverlay.classList.remove('active'); });
-
-    openCartBtn.addEventListener('click', () => { cartSidebar.classList.add('active'); profileOverlay.classList.remove('active'); });
-    closeCartBtn.addEventListener('click', () => cartSidebar.classList.remove('active'));
-
-    function createConfetti() {
-        for (let i = 0; i < 50; i++) {
-            const confetti = document.createElement('div');
-            confetti.className = 'confetti';
-            confetti.style.left = Math.random() * 100 + 'vw';
-            confetti.style.backgroundColor = ['#B8D4E3', '#2D2D2D', '#25D366', '#FFD700'][Math.floor(Math.random() * 4)];
-            confetti.style.animation = `sprinkle ${1 + Math.random() * 2}s linear forwards`;
-            document.body.appendChild(confetti);
-            setTimeout(() => confetti.remove(), 3000);
-        }
-    }
-
-    const loadProfile = () => {
-        const p = JSON.parse(localStorage.getItem('kisan_profile') || '{}');
-        if(p.firstName) {
-            document.getElementById('user-first-name').value = p.firstName;
-            document.getElementById('user-surname').value = p.surname;
-            document.getElementById('user-phone').value = p.phone;
-            document.getElementById('user-alt-phone').value = p.altPhone;
-            document.getElementById('user-address').value = p.address;
-        }
-    };
-    loadProfile();
-
-    saveProfileBtn.addEventListener('click', () => {
-        const profile = {
-            firstName: document.getElementById('user-first-name').value,
-            surname: document.getElementById('user-surname').value,
-            phone: document.getElementById('user-phone').value,
-            altPhone: document.getElementById('user-alt-phone').value,
-            address: document.getElementById('user-address').value
-        };
-        if (!profile.firstName || !profile.surname || !profile.phone || !profile.altPhone || !profile.address) {
-            document.getElementById('profile-status').innerText = 'All fields mandatory! ❌';
-            document.getElementById('profile-status').style.color = '#ff5f56';
-            return;
-        }
-        localStorage.setItem('kisan_profile', JSON.stringify(profile));
-        document.getElementById('profile-status').innerText = 'Saved Successfully! ✅';
-        document.getElementById('profile-status').style.color = '#25D366';
-        createConfetti();
-        setTimeout(() => { document.getElementById('profile-status').innerText = ''; }, 3000);
-    });
-
-    // 3. CART LOGIC
+    // CART LOGIC
     let cart = [];
     const cartCountEl = document.querySelector('.cart-count');
     const bottomCartCountEl = document.getElementById('bottom-cart-count');
     const bottomCartTotalEl = document.getElementById('bottom-cart-total');
     const cartItemsEl = document.getElementById('cart-items');
-    const subtotalEl = document.getElementById('cart-subtotal');
     const totalEl = document.getElementById('cart-total-amount');
+    const mrpTotalEl = document.getElementById('cart-mrp-total');
+    const savingsTotalEl = document.getElementById('cart-savings-total');
+    const savingsBar = document.getElementById('savings-bar');
+    const savingsAmountEl = document.getElementById('savings-amount');
 
     window.handleAddToCart = (pId, category) => {
         const card = document.querySelector(`.product-card[data-id="${pId}"]`);
+        if(card.classList.contains('out-of-stock')) return;
         const weight = card.querySelector('.qty-pill.active').innerText;
         const product = inventory[category].find(p => p.id == pId);
         const price = product.prices[weight] || 0;
-
+        const mrp = product.mrps ? (product.mrps[weight] || 0) : price;
         const existing = cart.find(item => item.id == pId && item.weight === weight);
-        if (existing) {
-            existing.qty++;
-        } else {
-            cart.push({ id: pId, name: product.name, img: product.img, weight, price, qty: 1 });
-        }
+        if (existing) { existing.qty++; } else { cart.push({ id: pId, name: product.name, img: product.img, weight, price, mrp, qty: 1 }); }
         updateUI();
     };
 
@@ -269,26 +421,29 @@
         bottomCartCountEl.innerText = `${totalItems} Items`;
         document.getElementById('cart-bottom-bar').classList.toggle('active', totalItems > 0);
 
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        const totalMrp = cart.reduce((sum, item) => sum + (item.mrp * item.qty), 0);
+        const savings = totalMrp - subtotal;
+
+        if (savings > 0) {
+            savingsAmountEl.innerText = savings.toFixed(2);
+            savingsBar.classList.add('active');
+        } else {
+            savingsBar.classList.remove('active');
+        }
+
         if (cart.length === 0) {
             cartItemsEl.innerHTML = '<p style="text-align: center; color: #999; margin-top: 40px;">Your basket is empty</p>';
-            subtotalEl.innerText = totalEl.innerText = bottomCartTotalEl.innerText = "₹0.00";
+            totalEl.innerText = mrpTotalEl.innerText = bottomCartTotalEl.innerText = "₹0.00";
+            savingsTotalEl.innerText = "-₹0.00";
         } else {
             cartItemsEl.innerHTML = cart.map((item, index) => `
-                <div class="cart-item">
-                    <img src="${item.img}" class="cart-item-img">
-                    <div class="cart-item-info">
-                        <h4>${item.name} (${item.weight})</h4>
-                        <p>₹${item.price.toFixed(2)} x ${item.qty}</p>
-                    </div>
-                    <button onclick="removeItem(${index})" style="background:none; border:none; color:#ff5f56; cursor:pointer"><i data-lucide="trash-2"></i></button>
-                </div>
+                <div class="cart-item"><img src="${item.img}" class="cart-item-img"><div class="cart-item-info"><h4>${item.name} (${item.weight})</h4><p>₹${item.price.toFixed(2)} x ${item.qty}</p></div><button onclick="removeItem(${index})" style="background:none; border:none; color:#ff5f56; cursor:pointer"><i data-lucide="trash-2"></i></button></div>
             `).join('');
             lucide.createIcons();
-
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-            const total = subtotal + 36; // 30 delivery + 6 GST
-            subtotalEl.innerText = `₹${subtotal.toFixed(2)}`;
-            totalEl.innerText = bottomCartTotalEl.innerText = `₹${total.toFixed(2)}`;
+            mrpTotalEl.innerText = `₹${totalMrp.toFixed(2)}`;
+            savingsTotalEl.innerText = `-₹${savings.toFixed(2)}`;
+            totalEl.innerText = bottomCartTotalEl.innerText = `₹${subtotal.toFixed(2)}`;
         }
     }
 
@@ -296,31 +451,36 @@
 
     const handleCheckout = () => {
         const p = JSON.parse(localStorage.getItem('kisan_profile') || '{}');
-        if (!p.firstName || !p.surname || !p.phone || !p.altPhone || !p.address) {
-            alert('Please complete profile!');
-            profileOverlay.classList.add('active');
-            return;
-        }
+        if (!p.firstName) { alert('Please complete your profile!'); document.getElementById('profile-overlay').classList.add('active'); return; }
         if (cart.length === 0) return alert('Cart is empty!');
 
-        let msg = `*NEW ORDER - Kisan to Customer*\n\n*Customer:* ${p.firstName} ${p.surname}\n*Phone:* ${p.phone}\n*Alt:* ${p.altPhone}\n*Address:* ${p.address}\n\n*Order:*\n`;
-        cart.forEach(i => msg += `- ${i.name} (${i.weight}) x ${i.qty}: ₹${(i.price * i.qty).toFixed(2)}\n`);
+        let msg = `*NEW ORDER - Apli Bhaji*\n\n*Customer:* ${p.firstName} ${p.surname}\n*Phone:* ${p.phone}\n*Alt Phone:* ${p.altPhone || 'N/A'}\n*Address:* ${p.address}\n\n*Order Detail:*\n`;
+        cart.forEach(i => {
+            msg += `- ${i.name} (${i.weight}) x ${i.qty}: ₹${(i.price * i.qty).toFixed(2)}\n`;
+        });
+
         const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-        msg += `\nSubtotal: ₹${subtotal.toFixed(2)}\nDelivery: ₹30.00\nGST: ₹6.00\n*TOTAL: ₹${(subtotal + 36).toFixed(2)}*`;
+        const totalMrp = cart.reduce((sum, item) => sum + (item.mrp * item.qty), 0);
+        const totalSavings = totalMrp - subtotal;
+
+        msg += `\n*Final Payable: ₹${subtotal.toFixed(2)}*`;
+        if(totalSavings > 0) msg += `\n\n*TOTAL SAVED ON THIS ORDER: ₹${totalSavings.toFixed(2)}* ✅`;
+
         window.open(`https://wa.me/919021107009?text=${encodeURIComponent(msg)}`, '_blank');
     };
 
     document.getElementById('whatsapp-checkout').addEventListener('click', handleCheckout);
     document.getElementById('bar-checkout').addEventListener('click', handleCheckout);
-    document.getElementById('view-cart-btn').addEventListener('click', () => cartSidebar.classList.add('active'));
-
-    const fruitsBg = ['🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🍆', '🥑', '🥦', '🥬', '🥒', '🌽', '🥕', '🫑', '🥔', '🍠'];
-    document.querySelectorAll('.floating-fruits-bg').forEach(container => {
-        for (let i = 0; i < 15; i++) {
-            const f = document.createElement('div'); f.className = 'floating-fruit'; f.innerText = fruitsBg[Math.floor(Math.random() * fruitsBg.length)];
-            f.style.left = Math.random() * 100 + '%'; f.style.top = Math.random() * 100 + '%';
-            f.style.animationDuration = (15 + Math.random() * 10) + 's'; container.appendChild(f);
-        }
+    document.getElementById('view-cart-btn').addEventListener('click', () => document.getElementById('cart-sidebar').classList.add('active'));
+    document.getElementById('open-profile').addEventListener('click', () => document.getElementById('profile-overlay').classList.add('active'));
+    document.getElementById('close-profile').addEventListener('click', () => document.getElementById('profile-overlay').classList.remove('active'));
+    document.getElementById('open-cart').addEventListener('click', () => document.getElementById('cart-sidebar').classList.add('active'));
+    document.getElementById('close-cart').addEventListener('click', () => document.getElementById('cart-sidebar').classList.remove('active'));
+    document.getElementById('save-profile').addEventListener('click', () => {
+        const profile = { firstName: document.getElementById('user-first-name').value, surname: document.getElementById('user-surname').value, phone: document.getElementById('user-phone').value, altPhone: document.getElementById('user-alt-phone').value, address: document.getElementById('user-address').value };
+        localStorage.setItem('kisan_profile', JSON.stringify(profile));
+        document.getElementById('profile-status').innerText = 'Saved Successfully! ✅';
+        setTimeout(() => document.getElementById('profile-status').innerText = '', 3000);
     });
 </script>
 </body>
