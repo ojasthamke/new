@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apli Bhaji | Shop Fresh Vegetables & Fruits</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="cart.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Arvo:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Continuous Revolving Bar Styles */
+        .revolving-bar {
+            width: 100%;
+            background: #f8fafc;
+            border-bottom: 1px solid var(--border-light);
+            padding: 12px 0;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .revolving-track {
+            display: inline-block;
+            animation: scroll-revolve 30s linear infinite;
+        }
+
+        .revolving-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 30px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .revolving-item i {
+            color: var(--primary-blue);
+            width: 18px;
+            height: 18px;
+        }
+
+        @keyframes scroll-revolve {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        /* Floating Savings Bar */
+        .savings-floating-bar {
+            position: fixed;
+            top: 100px;
+            left: 20px;
+            background: #22c55e;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-weight: 800;
+            box-shadow: 0 10px 25px rgba(34, 197, 94, 0.3);
+            z-index: 4000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(-150%);
+            transition: 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            pointer-events: none;
+        }
+        .savings-floating-bar.active { transform: translateX(0); }
+        .savings-floating-bar i { width: 20px; height: 20px; }
+
+        /* ABSOLUTE BOTTOM TRUSTED BAR WITH BLACK SHADOW */
+        .trusted-badge-floating {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            pointer-events: none;
+            overflow: hidden;
+            gap: 12px;
+            border-top: 2px solid rgba(34, 197, 94, 0.3);
+            box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.15);
+            animation: bottomGlowPulse 3s infinite ease-in-out;
+        }
+
+        @keyframes bottomGlowPulse {
+            0% { background: white; border-top-color: rgba(34, 197, 94, 0.3); }
+            50% { background: #f7fff9; border-top-color: rgba(34, 197, 94, 0.6); }
+            100% { background: white; border-top-color: rgba(34, 197, 94, 0.3); }
+        }
+
+        .badge-icon-box {
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .badge-icon-box i {
+            color: #22c55e;
+            width: 20px;
+            height: 20px;
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: sequentialTick 18s infinite linear;
+            filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.5));
+        }
+
+        .scrolling-text-wrapper {
+            height: 20px;
+            overflow: hidden;
+        }
+
+        .scrolling-text-track {
+            display: flex;
+            flex-direction: column;
+            animation: sequentialText 18s infinite cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        .scrolling-text-track span {
+            height: 20px;
+            font-size: 13px;
+            font-weight: 800;
+            color: #2D2D2D;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        @keyframes sequentialTick {
+            0%, 16.66%, 33.33%, 50%, 66.66%, 83.33% { stroke-dashoffset: 100; transform: scale(0.8); }
+            3%, 19.66%, 36.33%, 53%, 69.66%, 86.33% { stroke-dashoffset: 0; transform: scale(1.1); }
+            13.66%, 30.33%, 47%, 63.66%, 80.33%, 97% { stroke-dashoffset: 0; transform: scale(1); }
+            16.65%, 33.32%, 49.99%, 66.65%, 83.32%, 99.99% { stroke-dashoffset: 100; transform: scale(0.8); }
+        }
+
+        @keyframes sequentialText {
+            0%, 14% { transform: translateY(0); }
+            16.66%, 30.66% { transform: translateY(-20px); }
+            33.33%, 47.33% { transform: translateY(-40px); }
+            50%, 64% { transform: translateY(-60px); }
+            66.66%, 80.66% { transform: translateY(-80px); }
+            83.33%, 97.33% { transform: translateY(-100px); }
+            100% { transform: translateY(0); }
+        }
+
+        /* Adjust bottom bar position */
+        .cart-bottom-bar.active { transform: translateX(-50%) translateY(-40px); }
+        body { padding-bottom: 40px; }
+
+        /* Price Animation & Size Adjustments */
+        .price-container { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 30px; flex-wrap: wrap; margin-bottom: 5px; }
+
+        /* INCREASED MRP SIZE */
+        .product-mrp {
+            font-size: 20px; color: #94a3b8; font-weight: 500;
+            position: relative;
+            display: inline-block;
+        }
+
+        /* The Animated Cut Line */
+        .product-mrp::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 0;
+            height: 1.5px;
+            background: #ef4444;
+            transition: width 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        .product-card:hover .product-mrp::after,
+        .price-animate .product-mrp::after {
+            width: 100%;
+        }
+
+        /* REDUCED DISCOUNTED PRICE SIZE */
+        .product-price {
+            font-size: 14px; font-weight: 700; color: var(--text-dark);
+            opacity: 0;
+            transform: translateY(5px);
+            transition: all 0.4s ease 0.3s;
+        }
+
+        .product-card:hover .product-price,
+        .price-animate .product-price {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* INCREASED % OFF SIZE & ALIGNED CENTER */
+        .percentage-off-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .percentage-off {
+            background: #22c55e;
+            color: white;
+            font-size: 14px;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: 6px;
+            display: inline-block;
+            box-shadow: 0 4px 10px rgba(34, 197, 94, 0.2);
+            -webkit-font-smoothing: antialiased;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+            animation: cleanPulse 2s infinite ease-in-out;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        @keyframes cleanPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+
+        .badge-offer { position: absolute; top: 15px; left: 15px; background: #ef4444; color: white; padding: 5px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; z-index: 10; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3); }
+
+        /* ALIGN BUTTONS IN A LINE */
+        .product-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            text-align: center;
+        }
+
+        .product-info {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding-bottom: 0px;
+        }
+
+        .product-details-wrapper {
+            padding: 15px 15px 0 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            align-items: center;
+        }
+
+        .fancy-qty-selector {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .add-to-cart-btn {
+            margin-top: auto;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        .product-card.out-of-stock { opacity: 0.6; pointer-events: none; }
+        .add-to-cart-btn:disabled { background: #64748b !important; color: #fff !important; cursor: not-allowed; }
+
+        .quality-banner {
+            background: #2D2D2D;
+            position: relative;
+            overflow: hidden;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            flex-shrink: 0;
+            width: 100%;
+        }
+        .quality-banner::after { content: ""; position: absolute; top: 0; left: -150%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent); transform: skewX(-25deg); animation: sweep 4s infinite ease-in-out; }
+        @keyframes sweep { 0% { left: -150%; } 30% { left: 150%; } 100% { left: 150%; } }
+
+        .philosophy-teaser { padding: 80px 0; text-align: center; background: #fff; border-top: 1px solid var(--border-light); }
+        .philosophy-teaser h2 { font-family: var(--font-heading); font-size: 32px; max-width: 800px; margin: 0 auto 30px; }
+
+        .price-pop { animation: pop 0.3s ease; }
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+        /* IMAGE FIT ADJUSTMENTS */
+        .product-image {
+            width: 100%;
+            height: 220px; /* Fixed height for consistency */
+            overflow: hidden;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Standard for e-commerce, fills box */
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 12px !important;
+            }
+            .container { padding: 0 12px; }
+            .product-image { height: 160px; } /* Slightly shorter on mobile for 2-column grid */
+            .product-info h3 { font-size: 14px; }
+            .product-mrp { font-size: 18px; }
+            .product-price { font-size: 12px; }
+            .percentage-off { font-size: 11px; padding: 2px 6px; }
+            .qty-pill { padding: 4px 8px; font-size: 10px; }
+            .quality-banner { font-size: 8px; letter-spacing: 0.5px; padding: 4px; }
+            .add-to-cart-btn { font-size: 12px; padding: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="savings-bar" class="savings-floating-bar">
+    <i data-lucide="sparkles"></i>
+    <span>You've saved ₹<span id="savings-amount">0.00</span> on this order!</span>
+</div>
+
+<!-- Glowing Absolute Bottom Trusted Bar with Shadow -->
+<div class="trusted-badge-floating">
+    <div class="badge-icon-box">
+        <i data-lucide="check-circle"></i>
+    </div>
+    <div class="scrolling-text-wrapper">
+        <div class="scrolling-text-track">
+            <span>100% Trusted</span>
+            <span>Lowest Rates, Best Quality</span>
+            <span>100% Fresh Vegetables</span>
+            <span>Direct From Farm</span>
+            <span>Scheduled Delivery</span>
+            <span>Fixed Delivery Rates</span>
+        </div>
+    </div>
+</div>
+
+<header class="nav">
+    <div class="container">
+        <a href="index.html" class="logo"><span>Apli</span> Bhaji</a>
+        <div class="nav-actions">
+            <button class="cart-btn" id="open-cart"><i data-lucide="shopping-cart"></i><span class="cart-count">0</span></button>
+            <button class="profile-btn" id="open-profile"><i data-lucide="user"></i></button>
+        </div>
+    </div>
+</header>
+
+<!-- Revolving Bar Below Logo -->
+<div class="revolving-bar">
+    <div class="revolving-track">
+        <div class="revolving-item"><i data-lucide="shield-check"></i> 100% Trusted</div>
+        <div class="revolving-item"><i data-lucide="tag"></i> Lowest Rates, Best Quality</div>
+        <div class="revolving-item"><i data-lucide="leaf"></i> 100% Fresh Vegetables</div>
+        <div class="revolving-item"><i data-lucide="map-pin"></i> Direct From Farm</div>
+        <div class="revolving-item"><i data-lucide="calendar"></i> Scheduled Delivery</div>
+        <div class="revolving-item"><i data-lucide="truck"></i> Fixed Delivery Rates</div>
+        <!-- Duplicate for continuous loop -->
+        <div class="revolving-item"><i data-lucide="shield-check"></i> 100% Trusted</div>
+        <div class="revolving-item"><i data-lucide="tag"></i> Lowest Rates, Best Quality</div>
+        <div class="revolving-item"><i data-lucide="leaf"></i> 100% Fresh Vegetables</div>
+        <div class="revolving-item"><i data-lucide="map-pin"></i> Direct From Farm</div>
+        <div class="revolving-item"><i data-lucide="calendar"></i> Scheduled Delivery</div>
+        <div class="revolving-item"><i data-lucide="truck"></i> Fixed Delivery Rates</div>
+    </div>
+</div>
+
+<!-- Sidebar & Modals -->
+<div class="sidebar" id="cart-sidebar">
+    <div class="floating-fruits-bg"></div>
+    <div class="sidebar-header"><h3>Your Basket</h3><button class="close-sidebar" id="close-cart"><i data-lucide="x"></i></button></div>
+    <div class="sidebar-content" id="cart-items"></div>
+    <div class="sidebar-footer">
+        <div class="price-breakdown">
+            <div class="price-row"><span>Cart Total (MRP)</span> <span id="cart-mrp-total">₹0.00</span></div>
+            <div class="price-row" style="color: #22c55e; font-weight: 700;"><span>Total Savings</span> <span id="cart-savings-total">-₹0.00</span></div>
+            <div class="price-row total-row"><span>Final Payable</span> <span id="cart-total-amount">₹0.00</span></div>
+        </div>
+        <button class="checkout-btn" id="whatsapp-checkout"><i data-lucide="send"></i> Proceed to WhatsApp</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="profile-overlay">
+    <div class="profile-modal">
+        <button class="close-modal" id="close-profile"><i data-lucide="x"></i></button>
+        <h2>My Profile</h2>
+        <div class="profile-form">
+            <div class="form-group"><label>First Name *</label><input type="text" id="user-first-name" placeholder="Enter first name"></div>
+            <div class="form-group"><label>Surname *</label><input type="text" id="user-surname" placeholder="Enter surname"></div>
+            <div class="form-group"><label>Phone Number *</label><input type="tel" id="user-phone" placeholder="+91 00000 00000"></div>
+            <div class="form-group"><label>Alternate Phone Number *</label><input type="tel" id="user-alt-phone" placeholder="Alternate phone"></div>
+            <div class="form-group full"><label>Delivery Address *</label><textarea id="user-address" rows="3" placeholder="House no, Street, Landmark, City"></textarea></div>
+            <button class="save-profile-btn" id="save-profile">Save Information</button>
+            <p id="profile-status" style="grid-column: span 2; font-size: 13px; text-align: center; margin-top: 10px;"></p>
+        </div>
+    </div>
+</div>
+
+<div class="cart-bottom-bar" id="cart-bottom-bar">
+    <div class="cart-bar-content">
+        <div class="cart-summary"><i data-lucide="shopping-basket"></i> <span id="bottom-cart-count">0 Items</span> <span style="color:rgba(255,255,255,0.2)">|</span> <span id="bottom-cart-total">₹0.00</span></div>
+        <div class="cart-bar-actions"><button class="btn-view-cart" id="view-cart-btn">View Basket</button><button class="btn-checkout-bar" id="bar-checkout">Checkout</button></div>
+    </div>
+</div>
+
+<main>
+    <section id="vegetables" class="shop-section">
+        <div class="container">
+            <h2 class="section-title"><i data-lucide="leaf"></i> Fresh Vegetables</h2>
+            <div class="product-grid" id="veg-grid"></div>
+        </div>
+    </section>
+
+    <section id="fruits" class="shop-section" style="background-color: #F9FBFC;">
+        <div class="container">
+            <h2 class="section-title"><i data-lucide="apple"></i> Seasonal Fruits</h2>
+            <div class="product-grid" id="fruit-grid"></div>
+        </div>
+    </section>
+
+    <section class="philosophy-teaser">
+        <div class="container">
+            <div class="section-tag">OUR PHILOSOPHY</div>
+            <h2>"We believe that <span style="color:var(--primary-blue)">good food</span> starts with the soil and the respect we give to nature."</h2>
+            <div class="hero-trust" style="justify-content: center; margin-top: 20px;">
+                <div class="trust-item"><span class="dot"></span><span>Direct From Farm</span></div>
+                <div class="trust-item"><span class="dot" style="background:#25D366"></span><span>100% Organic</span></div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand"><a href="index.html" class="logo"><span>Apli</span> Bhaji</a><p>Connecting local farmers directly with health-conscious families.</p></div>
+            <div class="footer-column"><h3 class="footer-heading">Quick Links</h3><ul class="footer-links"><li><a href="index.html">Home</a></li><li><a href="shop.html">Shop Now</a></li></ul></div>
+            <div class="footer-contact"><h3 class="footer-heading">Contact Us</h3><p><i data-lucide="mail"></i> hello@aplibhaji.com</p></div>
+        </div>
+        <div class="footer-bottom"><p>© 2026 Apli Bhaji. All rights reserved.</p></div>
+    </div>
+</footer>
+
+<script>
+    lucide.createIcons();
+
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'kisan_inventory') location.reload();
+    });
+
+    const defaultProducts = { vegetables: [], fruits: [] };
+    function getInventory() { return JSON.parse(localStorage.getItem('kisan_inventory')) || defaultProducts; }
+    const inventory = getInventory();
+    const qtyOptions = ["250gm", "500gm", "1kg", "2kg", "3kg", "5kg"];
+
+    const renderGrid = (category, gridId) => {
+        const grid = document.getElementById(gridId);
+        let items = inventory[category] || [];
+        if (items.length === 0) { grid.innerHTML = '<p style="color:#94a3b8; font-style:italic; padding: 20px;">Coming soon...</p>'; return; }
+
+        // SORT ITEMS: In Stock first, then Out of Stock
+        items.sort((a, b) => (b.inStock ? 1 : 0) - (a.inStock ? 1 : 0));
+
+        grid.innerHTML = items.map(p => {
+            const availableWeights = qtyOptions.filter(o => (p.prices[o] || 0) > 0);
+            if (availableWeights.length === 0) return '';
+
+            const defaultWeight = availableWeights.includes('500gm') ? '500gm' : availableWeights[0];
+            const sellingPrice = p.prices[defaultWeight] || 0;
+            const mrp = p.mrps ? (p.mrps[defaultWeight] || 0) : sellingPrice;
+            const discount = mrp > sellingPrice ? Math.round(((mrp - sellingPrice) / mrp) * 100) : 0;
+
+            return `
+            <div class="product-card ${!p.inStock ? 'out-of-stock' : ''} price-animate" data-id="${p.id}" data-category="${category}">
+                <div class="product-image">
+                    <img src="${p.img}" alt="${p.name}">
+                    ${p.offer ? '<span class="badge-offer">OFFER</span>' : ''}
+                </div>
+                <div class="product-info">
+                    <div class="product-details-wrapper">
+                        <h3>${p.name}</h3>
+                        <div class="fancy-qty-selector">
+                            ${availableWeights.map(o => `<div class="qty-pill ${o===defaultWeight?'active':''}" onclick="setPill(this, '${p.id}', '${category}')">${o}</div>`).join('')}
+                        </div>
+                        <div class="product-meta">
+                            <div class="price-container">
+                                ${mrp > sellingPrice ? `<span class="product-mrp">₹${mrp.toFixed(2)}</span>` : ''}
+                                <span class="product-price" style="opacity: 1; transform: none;">₹${sellingPrice.toFixed(2)}</span>
+                            </div>
+                            ${discount > 0 ? `<div class="percentage-off-container"><span class="percentage-off">${discount}% OFF</span></div>` : ''}
+                        </div>
+                        <button class="add-to-cart-btn btn-primary-light" onclick="handleAddToCart('${p.id}', '${category}')" ${!p.inStock ? 'disabled' : ''}>
+                            <i data-lucide="shopping-cart"></i> ${p.inStock ? 'Add to Cart' : 'Out of Stock'}
+                        </button>
+                    </div>
+                    <div class="quality-banner">Lowest Rate, Highest Quality</div>
+                </div>
+            </div>
+            `;
+        }).join('');
+        lucide.createIcons();
+    };
+
+    window.setPill = (pill, pId, category) => {
+        const card = pill.closest('.product-card');
+        card.classList.remove('price-animate');
+        void card.offsetWidth;
+        card.classList.add('price-animate');
+        pill.parentElement.querySelectorAll('.qty-pill').forEach(el => el.classList.remove('active'));
+        pill.classList.add('active');
+        const weight = pill.innerText;
+        const product = inventory[category].find(p => p.id == pId);
+        const price = product.prices[weight] || 0;
+        const mrp = product.mrps ? (product.mrps[weight] || 0) : 0;
+        const discount = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
+
+        const priceEl = card.querySelector('.product-price');
+        priceEl.innerText = `₹${price.toFixed(2)}`;
+        const priceContainer = card.querySelector('.price-container');
+        const oldMrp = priceContainer.querySelector('.product-mrp');
+        if (oldMrp) oldMrp.remove();
+        if (mrp > price) {
+            const mrpEl = document.createElement('span');
+            mrpEl.className = 'product-mrp';
+            mrpEl.innerText = `₹${mrp.toFixed(2)}`;
+            priceContainer.prepend(mrpEl);
+        }
+        const oldDiscount = card.querySelector('.percentage-off');
+        if (oldDiscount) oldDiscount.parentElement.remove();
+        if (discount > 0) {
+            const metaContainer = card.querySelector('.product-meta');
+            const discCont = document.createElement('div');
+            discCont.className = 'percentage-off-container';
+            discCont.innerHTML = `<span class="percentage-off">${discount}% OFF</span>`;
+            metaContainer.appendChild(discCont);
+        }
+    };
+
+    renderGrid('vegetables', 'veg-grid');
+    renderGrid('fruits', 'fruit-grid');
+
+    // CART LOGIC
+    let cart = [];
+    const cartCountEl = document.querySelector('.cart-count');
+    const bottomCartCountEl = document.getElementById('bottom-cart-count');
+    const bottomCartTotalEl = document.getElementById('bottom-cart-total');
+    const cartItemsEl = document.getElementById('cart-items');
+    const totalEl = document.getElementById('cart-total-amount');
+    const mrpTotalEl = document.getElementById('cart-mrp-total');
+    const savingsTotalEl = document.getElementById('cart-savings-total');
+    const savingsBar = document.getElementById('savings-bar');
+    const savingsAmountEl = document.getElementById('savings-amount');
+
+    window.handleAddToCart = (pId, category) => {
+        const card = document.querySelector(`.product-card[data-id="${pId}"]`);
+        if(card.classList.contains('out-of-stock')) return;
+        const weight = card.querySelector('.qty-pill.active').innerText;
+        const product = inventory[category].find(p => p.id == pId);
+        const price = product.prices[weight] || 0;
+        const mrp = product.mrps ? (product.mrps[weight] || 0) : price;
+        const existing = cart.find(item => item.id == pId && item.weight === weight);
+        if (existing) { existing.qty++; } else { cart.push({ id: pId, name: product.name, img: product.img, weight, price, mrp, qty: 1 }); }
+        updateUI();
+    };
+
+    function updateUI() {
+        const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+        cartCountEl.innerText = totalItems;
+        bottomCartCountEl.innerText = `${totalItems} Items`;
+        document.getElementById('cart-bottom-bar').classList.toggle('active', totalItems > 0);
+
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        const totalMrp = cart.reduce((sum, item) => sum + (item.mrp * item.qty), 0);
+        const savings = totalMrp - subtotal;
+
+        if (savings > 0) {
+            savingsAmountEl.innerText = savings.toFixed(2);
+            savingsBar.classList.add('active');
+        } else {
+            savingsBar.classList.remove('active');
+        }
+
+        if (cart.length === 0) {
+            cartItemsEl.innerHTML = '<p style="text-align: center; color: #999; margin-top: 40px;">Your basket is empty</p>';
+            totalEl.innerText = mrpTotalEl.innerText = bottomCartTotalEl.innerText = "₹0.00";
+            savingsTotalEl.innerText = "-₹0.00";
+        } else {
+            cartItemsEl.innerHTML = cart.map((item, index) => `
+                <div class="cart-item"><img src="${item.img}" class="cart-item-img"><div class="cart-item-info"><h4>${item.name} (${item.weight})</h4><p>₹${item.price.toFixed(2)} x ${item.qty}</p></div><button onclick="removeItem(${index})" style="background:none; border:none; color:#ff5f56; cursor:pointer"><i data-lucide="trash-2"></i></button></div>
+            `).join('');
+            lucide.createIcons();
+            mrpTotalEl.innerText = `₹${totalMrp.toFixed(2)}`;
+            savingsTotalEl.innerText = `-₹${savings.toFixed(2)}`;
+            totalEl.innerText = bottomCartTotalEl.innerText = `₹${subtotal.toFixed(2)}`;
+        }
+    }
+
+    window.removeItem = (index) => { cart.splice(index, 1); updateUI(); };
+
+    const handleCheckout = () => {
+        const p = JSON.parse(localStorage.getItem('kisan_profile') || '{}');
+        if (!p.firstName) { alert('Please complete your profile!'); document.getElementById('profile-overlay').classList.add('active'); return; }
+        if (cart.length === 0) return alert('Cart is empty!');
+
+        let msg = `*NEW ORDER - Apli Bhaji*\n\n*Customer:* ${p.firstName} ${p.surname}\n*Phone:* ${p.phone}\n*Alt Phone:* ${p.altPhone || 'N/A'}\n*Address:* ${p.address}\n\n*Order Detail:*\n`;
+        cart.forEach(i => {
+            msg += `- ${i.name} (${i.weight}) x ${i.qty}: ₹${(i.price * i.qty).toFixed(2)}\n`;
+        });
+
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        const totalMrp = cart.reduce((sum, item) => sum + (item.mrp * item.qty), 0);
+        const totalSavings = totalMrp - subtotal;
+
+        msg += `\n*Final Payable: ₹${subtotal.toFixed(2)}*`;
+        if(totalSavings > 0) msg += `\n\n*TOTAL SAVED ON THIS ORDER: ₹${totalSavings.toFixed(2)}* ✅`;
+
+        window.open(`https://wa.me/919021107009?text=${encodeURIComponent(msg)}`, '_blank');
+    };
+
+    document.getElementById('whatsapp-checkout').addEventListener('click', handleCheckout);
+    document.getElementById('bar-checkout').addEventListener('click', handleCheckout);
+    document.getElementById('view-cart-btn').addEventListener('click', () => document.getElementById('cart-sidebar').classList.add('active'));
+    document.getElementById('open-profile').addEventListener('click', () => document.getElementById('profile-overlay').classList.add('active'));
+    document.getElementById('close-profile').addEventListener('click', () => document.getElementById('profile-overlay').classList.remove('active'));
+    document.getElementById('open-cart').addEventListener('click', () => document.getElementById('cart-sidebar').classList.add('active'));
+    document.getElementById('close-cart').addEventListener('click', () => document.getElementById('cart-sidebar').classList.remove('active'));
+    document.getElementById('save-profile').addEventListener('click', () => {
+        const profile = { firstName: document.getElementById('user-first-name').value, surname: document.getElementById('user-surname').value, phone: document.getElementById('user-phone').value, altPhone: document.getElementById('user-alt-phone').value, address: document.getElementById('user-address').value };
+        localStorage.setItem('kisan_profile', JSON.stringify(profile));
+        document.getElementById('profile-status').innerText = 'Saved Successfully! ✅';
+        setTimeout(() => document.getElementById('profile-status').innerText = '', 3000);
+    });
+</script>
+</body>
+</html>
